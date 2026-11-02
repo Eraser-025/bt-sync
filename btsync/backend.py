@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Eraser-025
 #
@@ -11,12 +10,15 @@ bt-sync - keep Bluetooth pairing keys in sync between Linux (BlueZ) and
 Windows on a dual-boot machine. This is the privileged backend (runs as root).
 
 commands:
-  scan        mount Windows read-only, compare the keys and write
-              /var/lib/bt-sync/state.json (device names and differences only,
-              never the keys). Run periodically by bt-sync-scan.timer.
-  status      print the differences.
-  apply       interactive sync from the terminal.
-  apply-json  used by bt-sync-gui through pkexec (requests on stdin).
+  setup         enable the background scan (bt-sync-scan.timer/.path).
+  scan          mount Windows read-only, compare the keys and write
+                /var/lib/bt-sync/state.json (device names and differences
+                only, never the keys). Run periodically by bt-sync-scan.timer.
+  status        print the differences.
+  apply         interactive sync from the terminal.
+  export-keys   print a backup of the Linux pairing keys (JSON) on stdout.
+  import-keys   restore a backup read from stdin into Linux.
+  apply-json    used by bt-sync-gui through pkexec (requests on stdin).
 """
 import argparse
 import configparser
@@ -31,7 +33,9 @@ import sys
 import time
 from pathlib import Path
 
-__version__ = "1.0.0"
+from . import __version__, os_name
+from . import i18n
+from .i18n import N_, _
 
 CONFIG = Path("/etc/bt-sync.conf")
 STATE_DIR = Path("/var/lib/bt-sync")
@@ -43,19 +47,51 @@ LOCK = RUN_DIR / "lock"
 MOUNTPOINT = RUN_DIR / "win"
 BT_DIR = Path("/var/lib/bluetooth")
 HIVE_PATH = "Windows/System32/config/SYSTEM"
+KEYFILE_FORMAT = "bt-sync-keys"
+NEWER_THRESHOLD = 120       # seconds: closer timestamps give no suggestion
 
 REG_BINARY, REG_DWORD, REG_QWORD = 3, 4, 11
 HEX12 = re.compile(r"^[0-9a-fA-F]{12}$")
+HEX32 = re.compile(r"^[0-9A-F]{32}$")
 MAC_RE = re.compile(r"^([0-9A-F]{2}:){5}[0-9A-F]{2}$")
 
-FAST_STARTUP_HINT = (
+FAST_STARTUP_HINT = N_(
     "This usually means Windows was hibernated or Fast Startup is enabled: in "
     "Windows run 'powercfg /h off' from an administrator prompt, then use "
     "Shut down (not Restart) before booting Linux.")
 
+LINUX = os_name()
+
 
 class BtSyncError(Exception):
-    """An expected failure, with a message meant for the user."""
+    """An expected failure, with a translatable message for the user.
+
+    The message is a list of (msgid, args) parts, so that it can be stored
+    untranslated in the state file and translated later by the GUI."""
+
+    def __init__(self, msgid, **args):
+        super().__init__(msgid)
+        self.parts = [(msgid, args)]
+
+    def add(self, msgid, **args):
+        self.parts.append((msgid, args))
+        return self
+
+    def __str__(self):
+        return i18n.render(self.parts)
+
+    def to_json(self):
+        return [{"id": m, "args": a} for m, a in self.parts]
+
+
+def error_json(e):
+    if isinstance(e, BtSyncError):
+        return e.to_json()
+    return [{"id": N_("unexpected error: {error}"), "args": {"error": repr(e)}}]
+
+
+def warn(text):
+    print(_("bt-sync: warning: {message}").format(message=text), file=sys.stderr)
 
 
 # ------------------------------------------------------------------ helpers
@@ -69,25 +105,11 @@ def load_config():
             cfg["reverse_irk"] = s.getboolean("reverse_irk", fallback=False)
             cfg["keep_backups"] = max(1, s.getint("keep_backups", fallback=5))
     except (configparser.Error, ValueError) as e:
-        print(f"bt-sync: warning: ignoring invalid {CONFIG}: {e}", file=sys.stderr)
+        warn(_("ignoring invalid {path}: {error}").format(path=CONFIG, error=e))
     return cfg
 
 
 CFG = load_config()
-
-
-def os_name():
-    """Pretty name of this Linux distribution (from /etc/os-release)."""
-    try:
-        for line in Path("/etc/os-release").read_text().splitlines():
-            if line.startswith("NAME="):
-                return line[5:].strip().strip("\"'") or "Linux"
-    except OSError:
-        pass
-    return "Linux"
-
-
-LINUX = os_name()
 
 
 def fmt_mac(raw):
@@ -103,13 +125,24 @@ def rev_hex(h):
     return bytes.fromhex(h)[::-1].hex().upper()
 
 
+def clean_name(name, fallback):
+    """Device names come from the devices themselves: no control characters
+    (a newline would corrupt the BlueZ info file)."""
+    name = "".join(c if c.isprintable() else " " for c in str(name)).strip()
+    return name[:248] or fallback
+
+
+def filetime_to_unix(ft):
+    return (ft - 116444736000000000) / 1e7 if ft else None
+
+
 def run(cmd, **kw):
     return subprocess.run(cmd, capture_output=True, text=True, **kw)
 
 
 def require_root():
     if os.geteuid() != 0:
-        raise BtSyncError("this command must be run as root (try: sudo bt-sync ...).")
+        raise BtSyncError(N_("this command must be run as root (try: sudo bt-sync ...)."))
 
 
 def write_json_atomic(path, obj, mode=0o644):
@@ -141,8 +174,8 @@ def exclusive_lock(timeout=120):
                 break
             except BlockingIOError:
                 if time.monotonic() > deadline:
-                    raise BtSyncError("another bt-sync operation is still running; "
-                                      "try again in a minute.") from None
+                    raise BtSyncError(N_("another bt-sync operation is still running; "
+                                         "try again in a minute.")) from None
                 time.sleep(0.5)
         yield
 
@@ -191,7 +224,7 @@ class WinMount:
             self._umount()
         r = run(["lsblk", "-J", "-p", "-o", "PATH,FSTYPE,MOUNTPOINT"])
         if r.returncode != 0:
-            raise BtSyncError(f"lsblk failed: {r.stderr.strip()}")
+            raise BtSyncError(N_("lsblk failed: {error}"), error=r.stderr.strip())
         devs = list(_flatten(json.loads(r.stdout).get("blockdevices") or []))
         parts = [d for d in devs if (d.get("fstype") or "") in ("ntfs", "ntfs3")]
         mount_errors = []
@@ -211,17 +244,19 @@ class WinMount:
             if ours:
                 self._umount()
 
-        msg = "Windows partition not found: no NTFS partition contains " + HIVE_PATH + "."
+        err = BtSyncError(N_("Windows partition not found: no NTFS partition "
+                             "contains {path}."), path=HIVE_PATH)
         if any((d.get("fstype") or "").lower() == "bitlocker" for d in devs):
-            msg += (" A BitLocker-encrypted partition was detected: bt-sync cannot read "
-                    "it. Turn off BitLocker (or device encryption) on the Windows "
-                    "system drive.")
+            err.add(N_("A BitLocker-encrypted partition was detected: bt-sync cannot "
+                       "read it. Turn off BitLocker (or device encryption) on the "
+                       "Windows system drive."))
         elif not parts:
-            msg += " No NTFS partitions were detected at all."
+            err.add(N_("No NTFS partitions were detected at all."))
         if mount_errors:
-            msg += " Some NTFS partitions could not be mounted (" + \
-                   "; ".join(mount_errors) + "). " + FAST_STARTUP_HINT
-        raise BtSyncError(msg)
+            err.add(N_("Some NTFS partitions could not be mounted ({errors})."),
+                    errors="; ".join(mount_errors))
+            err.add(FAST_STARTUP_HINT)
+        raise err
 
     def _mount(self, dev, errors):
         last = ""
@@ -230,7 +265,7 @@ class WinMount:
                 r = run(["mount", "-t", fs, "-o", mode, dev, str(MOUNTPOINT)])
                 if r.returncode == 0:
                     return MOUNTPOINT
-                last = r.stderr.strip() or f"mount -t {fs} failed"
+                last = r.stderr.strip() or f"mount -t {fs}: exit {r.returncode}"
         errors.append(f"{dev}: {last}")
         return None
 
@@ -251,32 +286,34 @@ class WinReg:
         try:
             import hivex  # late import: only needed here
         except ImportError:
-            raise BtSyncError("the Python hivex bindings are missing "
-                              "(install the 'hivex' package).") from None
+            raise BtSyncError(N_("the Python bindings of hivex are missing: install "
+                                 "'hivex' (Arch) or 'python3-hivex' (Debian, Ubuntu, "
+                                 "Fedora).")) from None
         try:
             self.h = hivex.Hivex(str(hive_path), write=write)
         except Exception as e:
-            raise BtSyncError(f"cannot open the Windows registry {hive_path}: {e}") from None
+            raise BtSyncError(N_("cannot open the Windows registry {path}: {error}"),
+                              path=str(hive_path), error=str(e)) from None
         root = self.h.root()
         sel = self._child(root, "Select")
         cur_v = self._val(sel, "Current") if sel else None
         if not cur_v:
-            raise BtSyncError("unexpected Windows registry layout "
-                              "(SYSTEM\\Select\\Current is missing).")
+            raise BtSyncError(N_("unexpected Windows registry layout "
+                                 "(SYSTEM\\Select\\Current is missing)."))
         cur = int.from_bytes(cur_v[1][:4], "little")
         path = [f"ControlSet{cur:03d}", "Services", "BTHPORT", "Parameters"]
         node = root
         for i, part in enumerate(path):
             node = self._child(node, part)
             if node is None:
-                raise BtSyncError("Windows registry key not found: SYSTEM\\" +
-                                  "\\".join(path[:i + 1]) +
-                                  ". Has Bluetooth ever been used on this Windows install?")
+                raise BtSyncError(N_("Windows registry key not found: {key}. Has "
+                                     "Bluetooth ever been used on this Windows install?"),
+                                  key="SYSTEM\\" + "\\".join(path[:i + 1]))
         self.keys = self._child(node, "Keys")
         self.devices = self._child(node, "Devices")
         if self.keys is None:
-            raise BtSyncError("no Bluetooth pairing keys in the Windows registry "
-                              "(pair at least one device in Windows first).")
+            raise BtSyncError(N_("no Bluetooth pairing keys in the Windows registry "
+                                 "(pair at least one device in Windows first)."))
 
     def _child(self, node, name):
         c = self.h.node_get_child(node, name)
@@ -285,6 +322,13 @@ class WinReg:
     def _val(self, node, name):
         v = self.h.node_get_value(node, name)
         return self.h.value_value(v) if v else None
+
+    def _time(self, node):
+        """Last write time of a registry key (Unix time), if available."""
+        try:
+            return filetime_to_unix(self.h.node_timestamp(node))
+        except Exception:
+            return None
 
     def _name(self, rawmac):
         if self.devices is None:
@@ -306,16 +350,21 @@ class WinReg:
             def dev(rawname):
                 mac = fmt_mac(rawname)
                 return devs.setdefault(mac, {
-                    "name": self._name(rawname.lower()) or mac,
-                    "classic": None, "le": None})
+                    "name": clean_name(self._name(rawname.lower()) or mac, mac),
+                    "classic": None, "le": None, "times": {}})
 
-            for v in self.h.node_values(ad):          # BR/EDR (classic) keys
+            # BR/EDR keys are values of the adapter key: the best timestamp we
+            # have is the last time any of them changed.
+            ad_time = self._time(ad)
+            for v in self.h.node_values(ad):
                 name = self.h.value_key(v)
                 if HEX12.match(name):
                     data = self.h.value_value(v)[1]
                     if len(data) == 16:
-                        dev(name)["classic"] = data.hex().upper()
-            for ch in self.h.node_children(ad):       # BLE keys
+                        d = dev(name)
+                        d["classic"] = data.hex().upper()
+                        d["times"]["classic"] = ad_time
+            for ch in self.h.node_children(ad):       # BLE keys: one subkey each
                 name = self.h.node_name(ch)
                 if not HEX12.match(name):
                     continue
@@ -335,7 +384,8 @@ class WinReg:
                 irk_hex = irk[1].hex().upper() if irk and len(irk[1]) == 16 else None
                 if irk_hex and CFG["reverse_irk"]:
                     irk_hex = rev_hex(irk_hex)
-                dev(name)["le"] = {
+                d = dev(name)
+                d["le"] = {
                     "ltk": ltk[1].hex().upper(),
                     "key_length": int.from_bytes(kl[1][:4], "little") if kl else 16,
                     "ediv": int.from_bytes(ediv[1][:4], "little") if ediv else 0,
@@ -343,13 +393,15 @@ class WinReg:
                     "irk": irk_hex,
                     "addr_type": atype,
                 }
+                d["times"]["le"] = self._time(ch)
         return res
 
     # ---- writing
     def _adapter(self, adapter):
         ad = self._child(self.keys, raw_mac(adapter))
         if ad is None:
-            raise BtSyncError(f"Bluetooth adapter {adapter} is not in the Windows registry.")
+            raise BtSyncError(N_("Bluetooth adapter {adapter} is not in the Windows "
+                                 "registry."), adapter=adapter)
         return ad
 
     def write_classic(self, adapter, mac, key_hex):
@@ -378,7 +430,8 @@ class WinReg:
         try:
             self.h.commit(None)
         except Exception as e:
-            raise BtSyncError(f"writing the Windows registry failed: {e}") from None
+            raise BtSyncError(N_("writing the Windows registry failed: {error}"),
+                              error=str(e)) from None
 
 
 # ----------------------------------------------------------------- BlueZ
@@ -391,8 +444,9 @@ def _cp():
 def _read_info(name, info):
     cp = _cp()
     cp.read(info)
-    entry = {"name": cp.get("General", "Name", fallback=name),
-             "classic": None, "le": None}
+    mtime = info.stat().st_mtime
+    entry = {"name": clean_name(cp.get("General", "Name", fallback=name), name),
+             "classic": None, "le": None, "times": {"classic": mtime, "le": mtime}}
     if cp.has_section("LinkKey"):
         entry["classic"] = cp.get("LinkKey", "Key", fallback="").upper() or None
     if cp.has_section("LongTermKey"):
@@ -408,14 +462,17 @@ def _read_info(name, info):
     return entry
 
 
+def linux_adapters():
+    if not BT_DIR.exists():
+        return []
+    return sorted(a.name for a in BT_DIR.iterdir() if a.is_dir() and MAC_RE.match(a.name))
+
+
 def linux_read():
     res = {}
-    if not BT_DIR.exists():
-        return res
-    for ad in BT_DIR.iterdir():
-        if not (ad.is_dir() and MAC_RE.match(ad.name)):
-            continue
-        devs = res.setdefault(ad.name, {})
+    for adname in linux_adapters():
+        ad = BT_DIR / adname
+        devs = res.setdefault(adname, {})
         for d in ad.iterdir():
             info = d / "info"
             if not (d.is_dir() and MAC_RE.match(d.name) and info.exists()):
@@ -423,7 +480,7 @@ def linux_read():
             try:
                 entry = _read_info(d.name, info)
             except (configparser.Error, ValueError, OSError) as e:
-                print(f"bt-sync: warning: skipping unreadable {info}: {e}", file=sys.stderr)
+                warn(_("skipping unreadable {path}: {error}").format(path=info, error=e))
                 continue
             if entry["classic"] or entry["le"]:
                 devs[d.name] = entry
@@ -442,7 +499,7 @@ def linux_write(adapter, mac, name, kind, data):
         cp.add_section("General")
     g = cp["General"]
     if not g.get("Name"):
-        g["Name"] = name
+        g["Name"] = clean_name(name, mac)
     g["Trusted"] = "true"
     g.setdefault("Blocked", "false")
     tech = g.get("SupportedTechnologies", "")
@@ -472,6 +529,25 @@ def linux_write(adapter, mac, name, kind, data):
     os.replace(tmp, info)
 
 
+def write_linux(entries, errors):
+    """Write [(adapter, mac, name, kind, data)] into BlueZ, which must be
+    stopped meanwhile because it rewrites the info files when it stops."""
+    if not entries:
+        return
+    r = run(["systemctl", "stop", "bluetooth.service"])
+    if r.returncode != 0:
+        raise BtSyncError(N_("could not stop bluetooth.service: {error}"),
+                          error=r.stderr.strip())
+    try:
+        for e in entries:
+            linux_write(*e)
+    finally:
+        r = run(["systemctl", "start", "bluetooth.service"])
+        if r.returncode != 0:
+            errors.append(_("could not restart bluetooth.service, run 'sudo systemctl "
+                            "start bluetooth': {error}").format(error=r.stderr.strip()))
+
+
 # ------------------------------------------------------------- comparison
 def _sig(kind, v):
     return v if kind == "classic" else (v["ltk"], v["ediv"], v["erand"])
@@ -482,6 +558,12 @@ def load_ignored():
         return set(json.loads(IGNORED.read_text()))
     except (OSError, ValueError):
         return set()
+
+
+def newer_side(wt, lt):
+    if wt is None or lt is None or abs(wt - lt) < NEWER_THRESHOLD:
+        return None
+    return "windows" if wt > lt else "linux"
 
 
 def diff(win, lin, use_ignored=False):
@@ -503,12 +585,20 @@ def diff(win, lin, use_ignored=False):
                     continue
                 if f"{ad}|{mac}|{kind}" in ignored:
                     continue
+                wt = w["times"].get(kind) if wk else None
+                lt = l["times"].get(kind) if lk else None
                 items.append({"adapter": ad, "mac": mac, "kind": kind, "action": action,
-                              "name": (w or l)["name"], "win": wk, "linux": lk})
+                              "name": (w or l)["name"], "win": wk, "linux": lk,
+                              "win_time": wt, "linux_time": lt,
+                              "newer": newer_side(wt, lt) if action == "conflict" else None})
     return items
 
 
 # ----------------------------------------------------------------- state
+STATE_ITEM_KEYS = ("adapter", "mac", "kind", "action", "name",
+                   "win_time", "linux_time", "newer")
+
+
 def summarize(devs):
     """Summary WITHOUT keys: the state file is world-readable."""
     return {ad: {mac: {"name": d["name"], "classic": bool(d["classic"]), "le": bool(d["le"])}
@@ -518,10 +608,10 @@ def summarize(devs):
 def save_state(win, lin, items, error=None):
     ensure_dirs()
     write_json_atomic(STATE, {
-        "time": time.time(), "error": error,
+        "version": 2, "time": time.time(), "error": error,
+        "linux_name": LINUX,
         "linux": summarize(lin), "windows": summarize(win),
-        "items": [{k: i[k] for k in ("adapter", "mac", "kind", "action", "name")}
-                  for i in items],
+        "items": [{k: i[k] for k in STATE_ITEM_KEYS} for i in items],
     })
 
 
@@ -532,32 +622,26 @@ def refresh_state():
         with WinMount(rw=False) as wm:
             win = WinReg(wm.hive).read_all()
     except Exception as e:  # the scan service must not fail loudly
-        msg = str(e) if isinstance(e, BtSyncError) else f"unexpected error: {e!r}"
-        save_state({}, lin, [], error=msg)
-        print(f"bt-sync: scan failed: {msg}", file=sys.stderr)
+        save_state({}, lin, [], error=error_json(e))
+        print(_("bt-sync: scan failed: {error}").format(
+            error=e if isinstance(e, BtSyncError) else repr(e)), file=sys.stderr)
         return False
     save_state(win, lin, diff(win, lin))
     return True
 
 
 # ------------------------------------------------------------------ sync
+def kind_label(kind):
+    return "Classic" if kind == "classic" else "LE"
+
+
 def do_sync(wm, to_linux, to_win, errors):
-    """Copy the keys. Returns the list of things done; problems go to errors."""
-    log = []
-    if to_linux:
-        # BlueZ rewrites the info files when it stops: stop it first.
-        r = run(["systemctl", "stop", "bluetooth.service"])
-        if r.returncode != 0:
-            raise BtSyncError(f"could not stop bluetooth.service: {r.stderr.strip()}")
-        try:
-            for it in to_linux:
-                linux_write(it["adapter"], it["mac"], it["name"], it["kind"], it["win"])
-                log.append(f"imported into {LINUX}: {it['name']} ({it['kind']})")
-        finally:
-            r = run(["systemctl", "start", "bluetooth.service"])
-            if r.returncode != 0:
-                errors.append("could not restart bluetooth.service, run "
-                              f"'sudo systemctl start bluetooth': {r.stderr.strip()}")
+    """Copy the keys. Returns (things done, backup path or None)."""
+    log, bak = [], None
+    write_linux([(it["adapter"], it["mac"], it["name"], it["kind"], it["win"])
+                 for it in to_linux], errors)
+    log += [_("imported into {system}: {device} ({kind})").format(
+        system=LINUX, device=it["name"], kind=kind_label(it["kind"])) for it in to_linux]
     if to_win:
         ensure_dirs()
         bak = BACKUPS / f"SYSTEM.{time.strftime('%Y%m%d-%H%M%S')}"
@@ -565,7 +649,6 @@ def do_sync(wm, to_linux, to_win, errors):
         os.chmod(bak, 0o600)
         for old in sorted(BACKUPS.glob("SYSTEM.*"))[:-CFG["keep_backups"]]:
             old.unlink()
-        log.append(f"backup of the Windows registry saved to {bak}")
         wreg = WinReg(wm.hive, write=True)
         for it in to_win:
             if it["kind"] == "classic":
@@ -574,24 +657,44 @@ def do_sync(wm, to_linux, to_win, errors):
                 wreg.write_le(it["adapter"], it["mac"], it["linux"])
         wreg.commit()
         del wreg
-        log += [f"exported to Windows: {it['name']} ({it['kind']})" for it in to_win]
-    return log
+        log += [_("exported to Windows: {device} ({kind})").format(
+            device=it["name"], kind=kind_label(it["kind"])) for it in to_win]
+    return log, (str(bak) if bak else None)
 
 
 def readonly_msg(wm):
-    where = "" if wm._ours else f" (it is already mounted read-only at {wm.root})"
-    return f"Windows is mounted read-only{where}. " + FAST_STARTUP_HINT
+    if wm._ours:
+        text = _("Windows is mounted read-only.")
+    else:
+        text = _("Windows is mounted read-only (it is already mounted at {path}).") \
+            .format(path=wm.root)
+    return text + " " + _(FAST_STARTUP_HINT)
 
 
-def cmd_scan(_):
+def cmd_setup(_args):
+    """Create the state directory and enable the background scan (the GUI
+    offers this when the units are disabled, e.g. after a Fedora/Bazzite or
+    AUR install, where packages do not enable services)."""
+    require_root()
+    run(["systemd-tmpfiles", "--create", "bt-sync.conf"])
+    r = run(["systemctl", "enable", "--now", "bt-sync-scan.timer", "bt-sync-scan.path"])
+    if r.returncode != 0:
+        raise BtSyncError(N_("could not enable the background scan: {error}"),
+                          error=r.stderr.strip())
+    run(["systemctl", "start", "--no-block", "bt-sync-scan.service"])
+    print(_("Background scan enabled."))
+    return 0
+
+
+def cmd_scan(_args):
     require_root()
     try:
         with exclusive_lock(timeout=30):
             ok = refresh_state()
     except BtSyncError:
-        print("bt-sync: another operation is running, scan skipped.")
+        print(_("bt-sync: another operation is running, scan skipped."))
         return 0
-    print("Scan completed." if ok else "Scan completed with errors (see state.json).")
+    print(_("Scan completed.") if ok else _("Scan completed with errors."))
     return 0
 
 
@@ -599,23 +702,23 @@ def _parse_requests(raw):
     try:
         reqs = json.loads(raw)["requests"]
     except (ValueError, KeyError, TypeError):
-        raise BtSyncError("invalid request from the GUI (malformed JSON).") from None
+        raise BtSyncError(N_("invalid request from the GUI.")) from None
     if not isinstance(reqs, list):
-        raise BtSyncError("invalid request from the GUI.")
+        raise BtSyncError(N_("invalid request from the GUI."))
     for r in reqs:
         if not (isinstance(r, dict)
                 and MAC_RE.match(str(r.get("adapter")))
                 and MAC_RE.match(str(r.get("mac")))
                 and r.get("direction") in ("win2linux", "linux2win")):
-            raise BtSyncError(f"invalid request from the GUI: {r!r}")
+            raise BtSyncError(N_("invalid request from the GUI."))
     return reqs
 
 
-def cmd_apply_json(_):
+def cmd_apply_json(_args):
     """Called by the GUI through pkexec. Only (adapter, mac, direction) are
     accepted: the keys are always re-read here as root, never taken from
-    the caller. Always prints one JSON line: {"ok": [...], "errors": [...]}."""
-    result = {"ok": [], "errors": []}
+    the caller. Always prints one JSON line."""
+    result = {"ok": [], "errors": [], "backup": None}
     try:
         require_root()
         reqs = _parse_requests(sys.stdin.read())
@@ -642,52 +745,193 @@ def cmd_apply_json(_):
                                 else:
                                     result["errors"].append(f"{it['name']}: {readonly_msg(wm)}")
                         if not found:
-                            result["errors"].append(
-                                f"{r['mac']}: nothing to copy in that direction "
-                                "(already in sync?).")
-                    result["ok"] = do_sync(wm, to_linux, to_win, result["errors"])
+                            result["errors"].append(_(
+                                "{device}: nothing to copy in that direction (already "
+                                "in sync?).").format(device=r["mac"]))
+                    result["ok"], result["backup"] = do_sync(wm, to_linux, to_win,
+                                                             result["errors"])
             finally:
                 refresh_state()
     except BtSyncError as e:
         result["errors"].append(str(e))
     except Exception as e:
-        result["errors"].append(f"unexpected error: {e!r}")
+        result["errors"].append(i18n.render([(N_("unexpected error: {error}"),
+                                              {"error": repr(e)})]))
     print(json.dumps(result))
     return 0
 
 
+# ------------------------------------------------- key backup (export/import)
+def cmd_export_keys(_args):
+    require_root()
+    lin = linux_read()
+    out = {"format": KEYFILE_FORMAT, "version": 1,
+           "created": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "system": LINUX,
+           "adapters": {ad: {mac: {k: d[k] for k in ("name", "classic", "le")}
+                             for mac, d in devs.items()}
+                        for ad, devs in lin.items() if devs}}
+    json.dump(out, sys.stdout, indent=1)
+    print()
+    if sys.stdout.isatty():
+        warn(_("the output contains secret pairing keys: keep it private."))
+    return 0
+
+
+def _int_in(v, lo, hi):
+    return isinstance(v, int) and not isinstance(v, bool) and lo <= v <= hi
+
+
+def validate_keyfile(obj):
+    """Strictly validate a key backup; returns {adapter: {mac: entry}}."""
+    bad = BtSyncError(N_("this is not a valid bt-sync key backup file."))
+    if not (isinstance(obj, dict) and obj.get("format") == KEYFILE_FORMAT
+            and obj.get("version") == 1 and isinstance(obj.get("adapters"), dict)):
+        raise bad
+    out = {}
+    for ad, devs in obj["adapters"].items():
+        if not (MAC_RE.match(str(ad)) and isinstance(devs, dict)):
+            raise bad
+        for mac, d in devs.items():
+            if not (MAC_RE.match(str(mac)) and isinstance(d, dict)):
+                raise bad
+            classic, le = d.get("classic"), d.get("le")
+            if classic is not None and not (isinstance(classic, str) and HEX32.match(classic)):
+                raise bad
+            if le is not None:
+                if not (isinstance(le, dict)
+                        and isinstance(le.get("ltk"), str) and HEX32.match(le["ltk"])
+                        and _int_in(le.get("key_length"), 7, 16)
+                        and _int_in(le.get("ediv"), 0, 0xFFFF)
+                        and _int_in(le.get("erand"), 0, 0xFFFFFFFFFFFFFFFF)
+                        and le.get("addr_type") in ("public", "static")
+                        and (le.get("irk") is None
+                             or (isinstance(le["irk"], str) and HEX32.match(le["irk"])))):
+                    raise bad
+                le = {k: le[k] for k in ("ltk", "key_length", "ediv", "erand",
+                                         "irk", "addr_type")}
+            if classic or le:
+                out.setdefault(ad, {})[mac] = {
+                    "name": clean_name(d.get("name") or mac, mac),
+                    "classic": classic, "le": le}
+    return out
+
+
+def import_plan(keys, lin, adapters):
+    plan = {"new": [], "same": [], "different": [], "missing_adapters": []}
+    for ad, devs in sorted(keys.items()):
+        if ad not in adapters:
+            plan["missing_adapters"].append(ad)
+            continue
+        for mac, d in sorted(devs.items()):
+            for kind in ("classic", "le"):
+                v = d[kind]
+                if not v:
+                    continue
+                cur = lin.get(ad, {}).get(mac, {}).get(kind)
+                group = "new" if not cur else \
+                    "same" if _sig(kind, cur) == _sig(kind, v) else "different"
+                plan[group].append({"adapter": ad, "mac": mac, "name": d["name"],
+                                    "kind": kind, "data": v})
+    return plan
+
+
+def cmd_import_keys(args):
+    as_json = args.json
+    result = {"new": [], "same": [], "different": [], "missing_adapters": [],
+              "ok": [], "errors": []}
+    try:
+        require_root()
+        raw = sys.stdin.read(4 * 1024 * 1024)
+        try:
+            obj = json.loads(raw)
+        except ValueError:
+            raise BtSyncError(N_("this is not a valid bt-sync key backup file.")) from None
+        keys = validate_keyfile(obj)
+        with exclusive_lock():
+            plan = import_plan(keys, linux_read(), set(linux_adapters()))
+            for g in ("new", "same", "different"):
+                result[g] = [f"{p['name']} ({kind_label(p['kind'])})" for p in plan[g]]
+            result["missing_adapters"] = plan["missing_adapters"]
+            if not args.dry_run:
+                todo = plan["new"] + (plan["different"] if args.overwrite else [])
+                write_linux([(p["adapter"], p["mac"], p["name"], p["kind"], p["data"])
+                             for p in todo], result["errors"])
+                result["ok"] = [_("imported into {system}: {device} ({kind})").format(
+                    system=LINUX, device=p["name"], kind=kind_label(p["kind"]))
+                    for p in todo]
+                if todo:
+                    refresh_state()
+    except BtSyncError as e:
+        if not as_json:
+            raise
+        result["errors"].append(str(e))
+
+    if as_json:
+        print(json.dumps(result))
+        return 0
+    if result["missing_adapters"]:
+        print(_("Adapters not present on this computer (skipped): {list}").format(
+            list=", ".join(result["missing_adapters"])))
+    print(_("Already present: {n}").format(n=len(result["same"])))
+    for g, label in (("new", _("New")), ("different", _("Different from this computer"))):
+        for line in result[g]:
+            print(f"  {label}: {line}")
+    if args.dry_run:
+        print(_("Dry run: nothing was changed."))
+    elif result["different"] and not args.overwrite:
+        print(_("Keys that differ were kept; use --overwrite to replace them."))
+    for line in result["ok"]:
+        print("  " + line)
+    for line in result["errors"]:
+        print(_("error: {message}").format(message=line), file=sys.stderr)
+    return 1 if result["errors"] else 0
+
+
 # ----------------------------------------------------- terminal (CLI) mode
-LABEL = {
-    "win2linux": f"on Windows, missing on {LINUX}",
-    "linux2win": f"on {LINUX}, missing on Windows",
-    "conflict": "DIFFERENT keys on the two systems",
-}
+def label(action):
+    return {
+        "win2linux": _("on Windows, missing on {system}"),
+        "linux2win": _("on {system}, missing on Windows"),
+        "conflict": _("DIFFERENT keys on the two systems"),
+    }[action].format(system=LINUX)
 
 
-def cmd_status(_):
+def newer_text(item):
+    if item.get("newer") == "windows":
+        return _("the Windows key is newer")
+    if item.get("newer") == "linux":
+        return _("the {system} key is newer").format(system=LINUX)
+    return ""
+
+
+def cmd_status(_args):
     require_root()
     with exclusive_lock():
         with WinMount(rw=False) as wm:
             win = WinReg(wm.hive).read_all()
     items = diff(win, linux_read(), use_ignored=True)
     if not items:
-        print("Everything is in sync.")
+        print(_("Everything is in sync."))
     for i in items:
-        print(f"{i['action']:10} {i['kind']:7} {i['mac']}  {i['name']}")
+        hint = newer_text(i)
+        print(f"{i['action']:10} {kind_label(i['kind']):7} {i['mac']}  {i['name']}"
+              + (f"  ({hint})" if hint else ""))
     return 0
 
 
 def _ask(item, can_write_win):
-    print(f"\n* {item['name']}  [{item['mac']}]  ({item['kind'].upper()})")
-    print(f"  {LABEL[item['action']]}")
-    opts = {"n": "skip", "i": "ignore from now on"}
+    print(f"\n* {item['name']}  [{item['mac']}]  ({kind_label(item['kind'])})")
+    print("  " + label(item["action"]))
+    if newer_text(item):
+        print("  " + newer_text(item))
+    opts = {"n": _("skip"), "i": _("ignore from now on")}
     if item["action"] == "win2linux":
-        opts = {"y": f"import into {LINUX}", **opts}
+        opts = {"y": _("import into {system}").format(system=LINUX), **opts}
     elif item["action"] == "linux2win":
         if can_write_win:
-            opts = {"y": "export to Windows", **opts}
+            opts = {"y": _("export to Windows"), **opts}
         else:
-            print("  (Windows is mounted read-only: cannot export)")
+            print("  " + _("(Windows is mounted read-only: cannot export)"))
     else:
         opts = {"w": f"Windows -> {LINUX}", **opts}
         if can_write_win:
@@ -702,14 +946,15 @@ def _ask(item, can_write_win):
             return a
 
 
-def cmd_apply(_):
+def cmd_apply(_args):
     require_root()
+    errors = []
     with exclusive_lock():
         with WinMount(rw=True) as wm:
             win = WinReg(wm.hive).read_all()
             items = diff(win, linux_read(), use_ignored=True)
             if not items:
-                print("Everything is in sync.")
+                print(_("Everything is in sync."))
                 return 0
             if not wm.writable:
                 print(readonly_msg(wm))
@@ -725,36 +970,47 @@ def cmd_apply(_):
             if ignore:
                 ensure_dirs()
                 write_json_atomic(IGNORED, sorted(load_ignored() | set(ignore)))
-            errors = []
-            for line in do_sync(wm, to_linux, to_win, errors):
+            log, bak = do_sync(wm, to_linux, to_win, errors)
+            if bak:
+                print("  " + _("backup of the Windows registry saved to {path}").format(path=bak))
+            for line in log:
                 print("  " + line)
             for line in errors:
-                print("  error: " + line, file=sys.stderr)
+                print("  " + _("error: {message}").format(message=line), file=sys.stderr)
         refresh_state()
     return 1 if errors else 0
 
 
-def main():
+def main(argv=None):
     p = argparse.ArgumentParser(prog="bt-sync", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+    p.add_argument("--lang", help=argparse.SUPPRESS)   # language for the GUI helper
     sub = p.add_subparsers(dest="cmd", required=True, metavar="command")
     for name, fn, hlp in (
+            ("setup", cmd_setup, "enable the background scan (systemd timer)"),
             ("scan", cmd_scan, "rescan both systems and update the state file"),
             ("status", cmd_status, "print the differences"),
             ("apply", cmd_apply, "interactive sync"),
+            ("export-keys", cmd_export_keys, "print a backup of the Linux pairing keys"),
+            ("import-keys", cmd_import_keys, "restore a key backup read from stdin"),
             ("apply-json", cmd_apply_json, "backend for the GUI (reads JSON on stdin)")):
-        sub.add_parser(name, help=hlp).set_defaults(fn=fn)
-    args = p.parse_args()
+        sp = sub.add_parser(name, help=hlp)
+        sp.set_defaults(fn=fn)
+        if name == "import-keys":
+            sp.add_argument("--dry-run", action="store_true",
+                            help="only show what would be imported")
+            sp.add_argument("--overwrite", action="store_true",
+                            help="also replace keys that differ")
+            sp.add_argument("--json", action="store_true", help=argparse.SUPPRESS)
+    args = p.parse_args(argv)
+    if args.lang:
+        i18n.set_language(args.lang)
     try:
         return args.fn(args)
     except BtSyncError as e:
-        print(f"bt-sync: error: {e}", file=sys.stderr)
+        print(_("bt-sync: error: {message}").format(message=e), file=sys.stderr)
         return 1
     except KeyboardInterrupt:
-        print("\nAborted, nothing was changed.", file=sys.stderr)
+        print("\n" + _("Aborted, nothing was changed."), file=sys.stderr)
         return 130
-
-
-if __name__ == "__main__":
-    sys.exit(main())

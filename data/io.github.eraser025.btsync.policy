@@ -8,8 +8,24 @@
   <vendor_url>https://github.com/Eraser-025/bt-sync</vendor_url>
   <icon_name>bt-sync</icon_name>
   <action id="io.github.eraser025.btsync.apply">
-    <description>Sync Bluetooth pairing keys with Windows</description>
-    <message>Authentication is required to sync Bluetooth pairing keys with Windows</message>
+    <description>Read or change Bluetooth pairing keys</description>
+    <description xml:lang="it">Leggere o modificare le chiavi di pairing Bluetooth</description>
+    <description xml:lang="de">Bluetooth-Kopplungsschlüssel lesen oder ändern</description>
+    <description xml:lang="es">Leer o cambiar las claves de emparejamiento Bluetooth</description>
+    <description xml:lang="fr">Lire ou modifier les clés d'appairage Bluetooth</description>
+    <description xml:lang="pt_BR">Ler ou alterar as chaves de pareamento Bluetooth</description>
+    <description xml:lang="ru">Чтение и изменение ключей сопряжения Bluetooth</description>
+    <description xml:lang="zh_CN">读取或修改蓝牙配对密钥</description>
+    <description xml:lang="ja">Bluetooth のペアリングキーの読み取りまたは変更</description>
+    <message>Authentication is required to read or change Bluetooth pairing keys</message>
+    <message xml:lang="it">Per leggere o modificare le chiavi di pairing Bluetooth è richiesta l'autenticazione</message>
+    <message xml:lang="de">Zum Lesen oder Ändern der Bluetooth-Kopplungsschlüssel ist eine Authentifizierung erforderlich</message>
+    <message xml:lang="es">Se requiere autenticación para leer o cambiar las claves de emparejamiento Bluetooth</message>
+    <message xml:lang="fr">Une authentification est requise pour lire ou modifier les clés d'appairage Bluetooth</message>
+    <message xml:lang="pt_BR">É necessária autenticação para ler ou alterar as chaves de pareamento Bluetooth</message>
+    <message xml:lang="ru">Для чтения или изменения ключей сопряжения Bluetooth требуется аутентификация</message>
+    <message xml:lang="zh_CN">读取或修改蓝牙配对密钥需要认证</message>
+    <message xml:lang="ja">Bluetooth のペアリングキーを読み取りまたは変更するには認証が必要です</message>
     <defaults>
       <allow_any>auth_admin</allow_any>
       <allow_inactive>auth_admin</allow_inactive>

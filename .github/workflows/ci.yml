@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y gettext desktop-file-utils libxml2-utils
+      - name: Compile translations and check data files
+        run: |
+          make check
+          xmllint --noout data/io.github.eraser025.btsync.policy
+          for po in po/*.po; do msgfmt -c -o /dev/null "$po"; done
+      - name: Check that the .pot file is up to date
+        run: |
+          make pot
+          git diff --ignore-matching-lines='POT-Creation-Date' --exit-code po/bt-sync.pot
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v

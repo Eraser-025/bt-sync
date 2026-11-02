@@ -1,0 +1,15 @@
+Package: bt-sync
+Version: @VERSION@-1
+Architecture: all
+Maintainer: Eraser-025 <349610023+Eraser-025@users.noreply.github.com>
+Depends: python3 (>= 3.8), python3-pyqt6 | python3-pyqt5, python3-hivex, bluez, pkexec | policykit-1, util-linux, mount, xdg-utils, systemd
+Recommends: ntfs-3g, qt6-translations-l10n | qttranslations5-l10n
+Section: utils
+Priority: optional
+Homepage: https://github.com/Eraser-025/bt-sync
+Description: sync Bluetooth pairing keys between Linux and Windows (dual boot)
+ bt-sync reads the Bluetooth pairing keys of Linux (BlueZ) and of the Windows
+ installation on the same computer, shows the differences and copies the keys
+ in the direction you choose, so that your devices work on both systems
+ without pairing them again. It includes a tray app, a background scan and a
+ backup of the pairing keys.

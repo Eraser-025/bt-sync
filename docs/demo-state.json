@@ -1,0 +1,96 @@
+{
+ "version": 2,
+ "time": 1793585158.254956,
+ "error": null,
+ "linux_name": "Bazzite",
+ "linux": {
+  "5C:F3:70:8A:21:04": {
+   "AC:80:0A:3E:91:17": {
+    "name": "Sony WH-1000XM5",
+    "classic": true,
+    "le": false
+   },
+   "D4:12:6B:C2:5A:E0": {
+    "name": "Logitech MX Master 3S",
+    "classic": false,
+    "le": true
+   },
+   "98:7A:14:0F:33:C9": {
+    "name": "Xbox Wireless Controller",
+    "classic": false,
+    "le": true
+   },
+   "DC:2C:26:E4:08:5B": {
+    "name": "Keychron K3",
+    "classic": true,
+    "le": false
+   }
+  }
+ },
+ "windows": {
+  "5C:F3:70:8A:21:04": {
+   "AC:80:0A:3E:91:17": {
+    "name": "Sony WH-1000XM5",
+    "classic": true,
+    "le": false
+   },
+   "D4:12:6B:C2:5A:E0": {
+    "name": "Logitech MX Master 3S",
+    "classic": false,
+    "le": true
+   },
+   "DC:2C:26:E4:08:5B": {
+    "name": "Keychron K3",
+    "classic": true,
+    "le": false
+   },
+   "64:03:7F:B1:6E:2D": {
+    "name": "Galaxy Buds2 Pro",
+    "classic": true,
+    "le": true
+   }
+  }
+ },
+ "items": [
+  {
+   "adapter": "5C:F3:70:8A:21:04",
+   "mac": "AC:80:0A:3E:91:17",
+   "kind": "classic",
+   "action": "conflict",
+   "name": "Sony WH-1000XM5",
+   "win_time": 1793513158.254956,
+   "linux_time": 1793066758.254956,
+   "newer": "windows"
+  },
+  {
+   "adapter": "5C:F3:70:8A:21:04",
+   "mac": "98:7A:14:0F:33:C9",
+   "kind": "le",
+   "action": "linux2win",
+   "name": "Xbox Wireless Controller",
+   "win_time": null,
+   "linux_time": 1793412358.254956,
+   "newer": null
+  },
+  {
+   "adapter": "5C:F3:70:8A:21:04",
+   "mac": "64:03:7F:B1:6E:2D",
+   "kind": "classic",
+   "action": "win2linux",
+   "name": "Galaxy Buds2 Pro",
+   "win_time": 1793498758.254956,
+   "linux_time": null,
+   "newer": null
+  },
+  {
+   "adapter": "5C:F3:70:8A:21:04",
+   "mac": "64:03:7F:B1:6E:2D",
+   "kind": "le",
+   "action": "win2linux",
+   "name": "Galaxy Buds2 Pro",
+   "win_time": 1793498758.254956,
+   "linux_time": null,
+   "newer": null
+  }
+ ]
+}

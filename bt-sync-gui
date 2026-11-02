@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Eraser-025
+"""Launcher of the bt-sync tray GUI (the code is in btsync/gui.py)."""
+import sys
+from pathlib import Path
+
+sys.dont_write_bytecode = True   # never leave __pycache__ in /usr/lib
+
+_here = Path(__file__).resolve().parent
+for _lib in (_here.parent / "lib" / "bt-sync", _here):   # installed, source tree
+    if (_lib / "btsync" / "__init__.py").is_file():
+        sys.path.insert(0, str(_lib))
+        break
+
+from btsync.gui import main  # noqa: E402
+
+sys.exit(main())

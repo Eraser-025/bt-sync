@@ -1,0 +1,648 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the bt-sync package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: bt-sync 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/Eraser-025/bt-sync/issues\n"
+"POT-Creation-Date: 2026-11-02 03:13+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: btsync/backend.py:59
+msgid ""
+"This usually means Windows was hibernated or Fast Startup is enabled: in "
+"Windows run 'powercfg /h off' from an administrator prompt, then use Shut "
+"down (not Restart) before booting Linux."
+msgstr ""
+
+#: btsync/backend.py:90 btsync/backend.py:758
+#, python-brace-format
+msgid "unexpected error: {error}"
+msgstr ""
+
+#: btsync/backend.py:94
+#, python-brace-format
+msgid "bt-sync: warning: {message}"
+msgstr ""
+
+#: btsync/backend.py:108
+#, python-brace-format
+msgid "ignoring invalid {path}: {error}"
+msgstr ""
+
+#: btsync/backend.py:145
+msgid "this command must be run as root (try: sudo bt-sync ...)."
+msgstr ""
+
+#: btsync/backend.py:177
+msgid "another bt-sync operation is still running; try again in a minute."
+msgstr ""
+
+#: btsync/backend.py:227
+#, python-brace-format
+msgid "lsblk failed: {error}"
+msgstr ""
+
+#: btsync/backend.py:247
+#, python-brace-format
+msgid "Windows partition not found: no NTFS partition contains {path}."
+msgstr ""
+
+#: btsync/backend.py:250
+msgid ""
+"A BitLocker-encrypted partition was detected: bt-sync cannot read it. Turn "
+"off BitLocker (or device encryption) on the Windows system drive."
+msgstr ""
+
+#: btsync/backend.py:254
+msgid "No NTFS partitions were detected at all."
+msgstr ""
+
+#: btsync/backend.py:256
+#, python-brace-format
+msgid "Some NTFS partitions could not be mounted ({errors})."
+msgstr ""
+
+#: btsync/backend.py:289
+msgid ""
+"the Python bindings of hivex are missing: install 'hivex' (Arch) or 'python3-"
+"hivex' (Debian, Ubuntu, Fedora)."
+msgstr ""
+
+#: btsync/backend.py:295
+#, python-brace-format
+msgid "cannot open the Windows registry {path}: {error}"
+msgstr ""
+
+#: btsync/backend.py:301
+msgid ""
+"unexpected Windows registry layout (SYSTEM\\Select\\Current is missing)."
+msgstr ""
+
+#: btsync/backend.py:309
+#, python-brace-format
+msgid ""
+"Windows registry key not found: {key}. Has Bluetooth ever been used on this "
+"Windows install?"
+msgstr ""
+
+#: btsync/backend.py:315
+msgid ""
+"no Bluetooth pairing keys in the Windows registry (pair at least one device "
+"in Windows first)."
+msgstr ""
+
+#: btsync/backend.py:403
+#, python-brace-format
+msgid "Bluetooth adapter {adapter} is not in the Windows registry."
+msgstr ""
+
+#: btsync/backend.py:433
+#, python-brace-format
+msgid "writing the Windows registry failed: {error}"
+msgstr ""
+
+#: btsync/backend.py:483
+#, python-brace-format
+msgid "skipping unreadable {path}: {error}"
+msgstr ""
+
+#: btsync/backend.py:539
+#, python-brace-format
+msgid "could not stop bluetooth.service: {error}"
+msgstr ""
+
+#: btsync/backend.py:547
+#, python-brace-format
+msgid ""
+"could not restart bluetooth.service, run 'sudo systemctl start bluetooth': "
+"{error}"
+msgstr ""
+
+#: btsync/backend.py:626
+#, python-brace-format
+msgid "bt-sync: scan failed: {error}"
+msgstr ""
+
+#: btsync/backend.py:643 btsync/backend.py:859
+#, python-brace-format
+msgid "imported into {system}: {device} ({kind})"
+msgstr ""
+
+#: btsync/backend.py:660
+#, python-brace-format
+msgid "exported to Windows: {device} ({kind})"
+msgstr ""
+
+#: btsync/backend.py:667
+msgid "Windows is mounted read-only."
+msgstr ""
+
+#: btsync/backend.py:669
+#, python-brace-format
+msgid "Windows is mounted read-only (it is already mounted at {path})."
+msgstr ""
+
+#: btsync/backend.py:682
+#, python-brace-format
+msgid "could not enable the background scan: {error}"
+msgstr ""
+
+#: btsync/backend.py:685 btsync/gui.py:519
+msgid "Background scan enabled."
+msgstr ""
+
+#: btsync/backend.py:695
+msgid "bt-sync: another operation is running, scan skipped."
+msgstr ""
+
+#: btsync/backend.py:697
+msgid "Scan completed."
+msgstr ""
+
+#: btsync/backend.py:697
+msgid "Scan completed with errors."
+msgstr ""
+
+#: btsync/backend.py:705 btsync/backend.py:707 btsync/backend.py:713
+msgid "invalid request from the GUI."
+msgstr ""
+
+#: btsync/backend.py:749
+#, python-brace-format
+msgid "{device}: nothing to copy in that direction (already in sync?)."
+msgstr ""
+
+#: btsync/backend.py:776
+msgid "the output contains secret pairing keys: keep it private."
+msgstr ""
+
+#: btsync/backend.py:786 btsync/backend.py:848
+msgid "this is not a valid bt-sync key backup file."
+msgstr ""
+
+#: btsync/backend.py:873
+#, python-brace-format
+msgid "Adapters not present on this computer (skipped): {list}"
+msgstr ""
+
+#: btsync/backend.py:875
+#, python-brace-format
+msgid "Already present: {n}"
+msgstr ""
+
+#: btsync/backend.py:876
+msgid "New"
+msgstr ""
+
+#: btsync/backend.py:876
+msgid "Different from this computer"
+msgstr ""
+
+#: btsync/backend.py:880
+msgid "Dry run: nothing was changed."
+msgstr ""
+
+#: btsync/backend.py:882
+msgid "Keys that differ were kept; use --overwrite to replace them."
+msgstr ""
+
+#: btsync/backend.py:886 btsync/backend.py:979
+#, python-brace-format
+msgid "error: {message}"
+msgstr ""
+
+#: btsync/backend.py:893
+#, python-brace-format
+msgid "on Windows, missing on {system}"
+msgstr ""
+
+#: btsync/backend.py:894
+#, python-brace-format
+msgid "on {system}, missing on Windows"
+msgstr ""
+
+#: btsync/backend.py:895
+msgid "DIFFERENT keys on the two systems"
+msgstr ""
+
+#: btsync/backend.py:901
+msgid "the Windows key is newer"
+msgstr ""
+
+#: btsync/backend.py:903
+#, python-brace-format
+msgid "the {system} key is newer"
+msgstr ""
+
+#: btsync/backend.py:914 btsync/backend.py:957
+msgid "Everything is in sync."
+msgstr ""
+
+#: btsync/backend.py:927
+msgid "skip"
+msgstr ""
+
+#: btsync/backend.py:927
+msgid "ignore from now on"
+msgstr ""
+
+#: btsync/backend.py:929
+#, python-brace-format
+msgid "import into {system}"
+msgstr ""
+
+#: btsync/backend.py:932
+msgid "export to Windows"
+msgstr ""
+
+#: btsync/backend.py:934
+msgid "(Windows is mounted read-only: cannot export)"
+msgstr ""
+
+#: btsync/backend.py:975
+#, python-brace-format
+msgid "backup of the Windows registry saved to {path}"
+msgstr ""
+
+#: btsync/backend.py:1012
+#, python-brace-format
+msgid "bt-sync: error: {message}"
+msgstr ""
+
+#: btsync/backend.py:1015
+msgid "Aborted, nothing was changed."
+msgstr ""
+
+#: btsync/gui.py:210 btsync/gui.py:354
+msgid "Settings"
+msgstr ""
+
+#: btsync/gui.py:214
+msgid "General"
+msgstr ""
+
+#: btsync/gui.py:217
+#, python-brace-format
+msgid "System default ({language})"
+msgstr ""
+
+#: btsync/gui.py:223
+msgid "Language:"
+msgstr ""
+
+#: btsync/gui.py:224
+msgid "Start in tray at login"
+msgstr ""
+
+#: btsync/gui.py:228
+msgid "No system tray available on this desktop"
+msgstr ""
+
+#: btsync/gui.py:230
+msgid "Show desktop notifications"
+msgstr ""
+
+#: btsync/gui.py:237
+msgid "Pairing keys backup"
+msgstr ""
+
+#: btsync/gui.py:239
+msgid ""
+"Save the pairing keys of this Linux system to a file and restore them later, "
+"for example after reinstalling Linux or on another Linux system installed on "
+"this computer."
+msgstr ""
+
+#: btsync/gui.py:245
+msgid "Export keys…"
+msgstr ""
+
+#: btsync/gui.py:246
+msgid "Import keys…"
+msgstr ""
+
+#: btsync/gui.py:253 btsync/gui.py:889
+msgid "The file contains secret keys: keep it private."
+msgstr ""
+
+#: btsync/gui.py:346
+msgid "Bluetooth devices"
+msgstr ""
+
+#: btsync/gui.py:348
+msgid "Refresh"
+msgstr ""
+
+#: btsync/gui.py:349
+msgid "Rescan both systems now"
+msgstr ""
+
+#: btsync/gui.py:370
+msgid "Enable now"
+msgstr ""
+
+#: btsync/gui.py:412
+msgid "✔ in sync     → only on one system     ⚠ different keys (★ = newer key)"
+msgstr ""
+
+#: btsync/gui.py:418
+msgid "Archive: never sync these and don't notify me"
+msgstr ""
+
+#: btsync/gui.py:422
+msgid "Archive selected ↓"
+msgstr ""
+
+#: btsync/gui.py:423
+msgid "↑ Restore selected"
+msgstr ""
+
+#: btsync/gui.py:440
+msgid "Enjoying bt-sync? Buy me a 1UP!"
+msgstr ""
+
+#: btsync/gui.py:442
+msgid "Support me ☕"
+msgstr ""
+
+#: btsync/gui.py:454
+msgid "to Windows"
+msgstr ""
+
+#: btsync/gui.py:455
+#, python-brace-format
+msgid "to {system}"
+msgstr ""
+
+#: btsync/gui.py:456
+#, python-brace-format
+msgid "Copy the selected devices from {system} to Windows"
+msgstr ""
+
+#: btsync/gui.py:458
+#, python-brace-format
+msgid "Copy the selected devices from Windows to {system}"
+msgstr ""
+
+#: btsync/gui.py:465
+msgid "Open Bluetooth Sync"
+msgstr ""
+
+#: btsync/gui.py:466
+msgid "Refresh now"
+msgstr ""
+
+#: btsync/gui.py:468
+msgid "Settings…"
+msgstr ""
+
+#: btsync/gui.py:471
+msgid "Quit"
+msgstr ""
+
+#: btsync/gui.py:507
+msgid ""
+"The background scan is not enabled, so the device lists are not updated."
+msgstr ""
+
+#: btsync/gui.py:538
+msgid "Cannot change the login autostart:"
+msgstr ""
+
+#: btsync/gui.py:549
+#, python-brace-format
+msgid "Could not open the browser: {url}"
+msgstr ""
+
+#: btsync/gui.py:557
+msgid "No scan available yet"
+msgstr ""
+
+#: btsync/gui.py:559
+msgid ""
+"The background scan has not run yet. If this persists, make sure it is "
+"enabled:"
+msgstr ""
+
+#: btsync/gui.py:594
+#, python-brace-format
+msgid "{n} device to sync"
+msgid_plural "{n} devices to sync"
+msgstr[0] ""
+msgstr[1] ""
+
+#: btsync/gui.py:596
+msgid "everything in sync"
+msgstr ""
+
+#: btsync/gui.py:600
+#, python-brace-format
+msgid "To sync: {devices}"
+msgstr ""
+
+#: btsync/gui.py:631
+msgid "different keys"
+msgstr ""
+
+#: btsync/gui.py:633
+msgid "newer key"
+msgstr ""
+
+#: btsync/gui.py:635
+msgid "older key"
+msgstr ""
+
+#: btsync/gui.py:637
+#, python-brace-format
+msgid "{kind} key changed on Windows: {wtime}, on {system}: {ltime}"
+msgstr ""
+
+#: btsync/gui.py:645
+msgid ""
+"Cannot tell which key is newer: copy from the system where you paired the "
+"device last."
+msgstr ""
+
+#: btsync/gui.py:648
+msgid "only here"
+msgstr ""
+
+#: btsync/gui.py:650
+msgid "partially synced"
+msgstr ""
+
+#: btsync/gui.py:652
+msgid "in sync"
+msgstr ""
+
+#: btsync/gui.py:674
+msgid "Could not read Windows:"
+msgstr ""
+
+#: btsync/gui.py:677
+msgid ""
+"Linux and Windows use different Bluetooth adapters (different adapter "
+"addresses): nothing can be synced."
+msgstr ""
+
+#: btsync/gui.py:682
+#, python-brace-format
+msgid "Last scan: {time}"
+msgstr ""
+
+#: btsync/gui.py:706
+#, python-brace-format
+msgid ""
+"{devices}: the key on {system} is newer. You probably want to copy in the "
+"other direction."
+msgstr ""
+
+#: btsync/gui.py:710
+msgid "The selected key is the newer one: copying it is probably right."
+msgstr ""
+
+#: btsync/gui.py:744
+msgid "Cannot start a scan"
+msgstr ""
+
+#: btsync/gui.py:745
+#, python-brace-format
+msgid "Cannot request a scan ({error}). Try:"
+msgstr ""
+
+#: btsync/gui.py:751
+msgid "Scanning…"
+msgstr ""
+
+#: btsync/gui.py:758
+msgid "The scan did not answer"
+msgstr ""
+
+#: btsync/gui.py:763
+msgid "The scan service did not answer. Make sure it is enabled:"
+msgstr ""
+
+#: btsync/gui.py:780
+msgid ""
+"Could not start pkexec. Is polkit installed and is a polkit authentication "
+"agent running?"
+msgstr ""
+
+#: btsync/gui.py:792
+msgid "Authentication cancelled or not authorized"
+msgstr ""
+
+#: btsync/gui.py:798
+#, python-brace-format
+msgid "Unexpected answer from {helper} (exit code {code})."
+msgstr ""
+
+#: btsync/gui.py:814
+msgid "Working…"
+msgstr ""
+
+#: btsync/gui.py:827
+#, python-brace-format
+msgid ""
+"The keys of {devices} differ between the two systems.\n"
+"The ones on {system} will be overwritten."
+msgstr ""
+
+#: btsync/gui.py:832
+#, python-brace-format
+msgid ""
+"Careful: for {devices} the key you are about to overwrite is the newer one."
+msgstr ""
+
+#: btsync/gui.py:835
+msgid "Overwrite the keys?"
+msgstr ""
+
+#: btsync/gui.py:836
+msgid "Continue?"
+msgstr ""
+
+#: btsync/gui.py:850 btsync/gui.py:854 btsync/gui.py:957 btsync/gui.py:961
+msgid "Done:"
+msgstr ""
+
+#: btsync/gui.py:851 btsync/gui.py:958
+msgid "Problems:"
+msgstr ""
+
+#: btsync/gui.py:860 btsync/gui.py:886
+msgid "Export pairing keys"
+msgstr ""
+
+#: btsync/gui.py:861 btsync/gui.py:893
+msgid "bt-sync key backup"
+msgstr ""
+
+#: btsync/gui.py:883
+#, python-brace-format
+msgid "Cannot write {path}: {error}"
+msgstr ""
+
+#: btsync/gui.py:887
+#, python-brace-format
+msgid "Exported {n} pairing key to:"
+msgid_plural "Exported {n} pairing keys to:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: btsync/gui.py:892 btsync/gui.py:902 btsync/gui.py:912 btsync/gui.py:955
+msgid "Import pairing keys"
+msgstr ""
+
+#: btsync/gui.py:903
+msgid "This is not a valid bt-sync key backup file."
+msgstr ""
+
+#: btsync/gui.py:918
+#, python-brace-format
+msgid "Skipped: these Bluetooth adapters are not on this computer: {list}"
+msgstr ""
+
+#: btsync/gui.py:924
+#, python-brace-format
+msgid "Nothing to import: the {n} key in the file is already present."
+msgid_plural "Nothing to import: the {n} keys in the file are already present."
+msgstr[0] ""
+msgstr[1] ""
+
+#: btsync/gui.py:930
+#, python-brace-format
+msgid "{n} new key will be imported:"
+msgid_plural "{n} new keys will be imported:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: btsync/gui.py:934
+#, python-brace-format
+msgid "{n} key is different from the one on this computer:"
+msgid_plural "{n} keys are different from the ones on this computer:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: btsync/gui.py:937
+msgid "Bluetooth will restart for a moment."
+msgstr ""
+
+#: btsync/gui.py:939
+msgid "Import new keys only"
+msgstr ""
+
+#: btsync/gui.py:941
+msgid "Import and overwrite"
+msgstr ""

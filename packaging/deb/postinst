@@ -1,0 +1,13 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -e
+if [ "$1" = "configure" ]; then
+    systemd-tmpfiles --create bt-sync.conf || true
+    if [ -d /run/systemd/system ]; then
+        systemctl daemon-reload || true
+        # Debian/Ubuntu convention: enable the services a package ships.
+        systemctl enable --now bt-sync-scan.timer bt-sync-scan.path || true
+    fi
+    gtk-update-icon-cache -q -t /usr/share/icons/hicolor 2>/dev/null || true
+fi
+exit 0

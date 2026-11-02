@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Builds the .deb and .rpm packages and attaches them to every published release.
+name: Release packages
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  deb:
+    runs-on: ubuntu-latest
+    container: debian:12
+    steps:
+      - name: Install build tools
+        run: apt-get update && apt-get install -y make gettext dpkg-dev git
+      - uses: actions/checkout@v4
+      - run: packaging/deb/build-deb.sh
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.deb
+
+  rpm:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    steps:
+      - name: Install build tools
+        run: dnf -y install rpm-build make gettext desktop-file-utils systemd-rpm-macros python3 tar gzip git
+      - uses: actions/checkout@v4
+      - run: packaging/rpm/build-rpm.sh
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.noarch.rpm

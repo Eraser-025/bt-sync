@@ -6,3 +6,5 @@ __pycache__/
 /src/
 *.pkg.tar.*
 *.tar.gz
+build/
+dist/
