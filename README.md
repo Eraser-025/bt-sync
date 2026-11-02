@@ -82,9 +82,14 @@ These systems have a read-only `/usr`, so bt-sync is layered with
 [latest release](https://github.com/Eraser-025/bt-sync/releases/latest), then:
 
 ```sh
-rpm-ostree install ./bt-sync-*.noarch.rpm
-systemctl reboot
+sudo rpm-ostree install --apply-live ./bt-sync-*.noarch.rpm
+sudo bt-sync setup
 ```
+
+`--apply-live` makes bt-sync usable right away, **without rebooting**; the
+package also stays installed after the next reboot. If rpm-ostree refuses to
+apply it live (for example because a system update is already waiting for a
+reboot), run the same command without `--apply-live` and reboot.
 
 ### Enabling the background scan
 

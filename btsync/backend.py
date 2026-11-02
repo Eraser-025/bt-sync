@@ -676,6 +676,9 @@ def cmd_setup(_args):
     offers this when the units are disabled, e.g. after a Fedora/Bazzite or
     AUR install, where packages do not enable services)."""
     require_root()
+    # daemon-reload: after 'rpm-ostree install --apply-live' (Bazzite) or a
+    # manual install, systemd may not have seen the new unit files yet.
+    run(["systemctl", "daemon-reload"])
     run(["systemd-tmpfiles", "--create", "bt-sync.conf"])
     r = run(["systemctl", "enable", "--now", "bt-sync-scan.timer", "bt-sync-scan.path"])
     if r.returncode != 0:
