@@ -41,7 +41,7 @@ build/locale/%/LC_MESSAGES/bt-sync.mo: po/%.po
 
 pot:
 	xgettext --from-code=UTF-8 -L Python --keyword=_ --keyword=N_ \
-		--keyword=ngettext:1,2 --add-comments=TRANSLATORS: \
+		--keyword=ngettext:1,2 --add-comments=TRANSLATORS: --add-location=file \
 		--package-name=bt-sync --package-version=$(VERSION) \
 		--msgid-bugs-address=https://github.com/Eraser-025/bt-sync/issues \
 		-o po/bt-sync.pot btsync/*.py

@@ -6,6 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bt-sync 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/Eraser-025/bt-sync/issues\n"
+"POT-Creation-Date: 2026-11-02 03:24+0100\n"
 "PO-Revision-Date: 2026-11-02 03:13+0100\n"
 "Last-Translator: Eraser-025\n"
 "Language-Team: Japanese\n"
@@ -15,512 +16,579 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: btsync/backend.py:59
-msgid "This usually means Windows was hibernated or Fast Startup is enabled: in Windows run 'powercfg /h off' from an administrator prompt, then use Shut down (not Restart) before booting Linux."
-msgstr "通常、Windows が休止状態になっているか高速スタートアップが有効になっています。Windows の管理者コマンドプロンプトで 'powercfg /h off' を実行し、Linux を起動する前に「再起動」ではなく「シャットダウン」を使ってください。"
+#: btsync/backend.py
+msgid ""
+"This usually means Windows was hibernated or Fast Startup is enabled: in "
+"Windows run 'powercfg /h off' from an administrator prompt, then use Shut "
+"down (not Restart) before booting Linux."
+msgstr ""
+"通常、Windows が休止状態になっているか高速スタートアップが有効になっていま"
+"す。Windows の管理者コマンドプロンプトで 'powercfg /h off' を実行し、Linux を"
+"起動する前に「再起動」ではなく「シャットダウン」を使ってください。"
 
-#: btsync/backend.py:90 btsync/backend.py:758
+#: btsync/backend.py
 #, python-brace-format
 msgid "unexpected error: {error}"
 msgstr "予期しないエラー: {error}"
 
-#: btsync/backend.py:94
+#: btsync/backend.py
 #, python-brace-format
 msgid "bt-sync: warning: {message}"
 msgstr "bt-sync: 警告: {message}"
 
-#: btsync/backend.py:108
+#: btsync/backend.py
 #, python-brace-format
 msgid "ignoring invalid {path}: {error}"
 msgstr "無効な {path} を無視します: {error}"
 
-#: btsync/backend.py:145
+#: btsync/backend.py
 msgid "this command must be run as root (try: sudo bt-sync ...)."
 msgstr "このコマンドは root で実行する必要があります (例: sudo bt-sync ...)。"
 
-#: btsync/backend.py:177
+#: btsync/backend.py
 msgid "another bt-sync operation is still running; try again in a minute."
 msgstr "別の bt-sync の処理がまだ実行中です。1 分後にもう一度お試しください。"
 
-#: btsync/backend.py:227
+#: btsync/backend.py
 #, python-brace-format
 msgid "lsblk failed: {error}"
 msgstr "lsblk が失敗しました: {error}"
 
-#: btsync/backend.py:247
+#: btsync/backend.py
 #, python-brace-format
 msgid "Windows partition not found: no NTFS partition contains {path}."
-msgstr "Windows パーティションが見つかりません: {path} を含む NTFS パーティションがありません。"
+msgstr ""
+"Windows パーティションが見つかりません: {path} を含む NTFS パーティションがあ"
+"りません。"
 
-#: btsync/backend.py:250
-msgid "A BitLocker-encrypted partition was detected: bt-sync cannot read it. Turn off BitLocker (or device encryption) on the Windows system drive."
-msgstr "BitLocker で暗号化されたパーティションが見つかりました。bt-sync は読み取れません。Windows のシステムドライブで BitLocker (またはデバイスの暗号化) を無効にしてください。"
+#: btsync/backend.py
+msgid ""
+"A BitLocker-encrypted partition was detected: bt-sync cannot read it. Turn "
+"off BitLocker (or device encryption) on the Windows system drive."
+msgstr ""
+"BitLocker で暗号化されたパーティションが見つかりました。bt-sync は読み取れま"
+"せん。Windows のシステムドライブで BitLocker (またはデバイスの暗号化) を無効"
+"にしてください。"
 
-#: btsync/backend.py:254
+#: btsync/backend.py
 msgid "No NTFS partitions were detected at all."
 msgstr "NTFS パーティションが 1 つも見つかりません。"
 
-#: btsync/backend.py:256
+#: btsync/backend.py
 #, python-brace-format
 msgid "Some NTFS partitions could not be mounted ({errors})."
 msgstr "一部の NTFS パーティションをマウントできませんでした ({errors})。"
 
-#: btsync/backend.py:289
-msgid "the Python bindings of hivex are missing: install 'hivex' (Arch) or 'python3-hivex' (Debian, Ubuntu, Fedora)."
-msgstr "hivex の Python バインディングがありません。'hivex' (Arch) または 'python3-hivex' (Debian、Ubuntu、Fedora) をインストールしてください。"
+#: btsync/backend.py
+msgid ""
+"the Python bindings of hivex are missing: install 'hivex' (Arch) or 'python3-"
+"hivex' (Debian, Ubuntu, Fedora)."
+msgstr ""
+"hivex の Python バインディングがありません。'hivex' (Arch) または 'python3-"
+"hivex' (Debian、Ubuntu、Fedora) をインストールしてください。"
 
-#: btsync/backend.py:295
+#: btsync/backend.py
 #, python-brace-format
 msgid "cannot open the Windows registry {path}: {error}"
 msgstr "Windows レジストリ {path} を開けません: {error}"
 
-#: btsync/backend.py:301
-msgid "unexpected Windows registry layout (SYSTEM\\Select\\Current is missing)."
-msgstr "Windows レジストリの構造が想定外です (SYSTEM\\Select\\Current がありません)。"
+#: btsync/backend.py
+msgid ""
+"unexpected Windows registry layout (SYSTEM\\Select\\Current is missing)."
+msgstr ""
+"Windows レジストリの構造が想定外です (SYSTEM\\Select\\Current がありません)。"
 
-#: btsync/backend.py:309
+#: btsync/backend.py
 #, python-brace-format
-msgid "Windows registry key not found: {key}. Has Bluetooth ever been used on this Windows install?"
-msgstr "Windows のレジストリキーが見つかりません: {key}。この Windows で Bluetooth を使ったことはありますか？"
+msgid ""
+"Windows registry key not found: {key}. Has Bluetooth ever been used on this "
+"Windows install?"
+msgstr ""
+"Windows のレジストリキーが見つかりません: {key}。この Windows で Bluetooth を"
+"使ったことはありますか？"
 
-#: btsync/backend.py:315
-msgid "no Bluetooth pairing keys in the Windows registry (pair at least one device in Windows first)."
-msgstr "Windows レジストリに Bluetooth のペアリングキーがありません (先に Windows でデバイスを 1 台以上ペアリングしてください)。"
+#: btsync/backend.py
+msgid ""
+"no Bluetooth pairing keys in the Windows registry (pair at least one device "
+"in Windows first)."
+msgstr ""
+"Windows レジストリに Bluetooth のペアリングキーがありません (先に Windows で"
+"デバイスを 1 台以上ペアリングしてください)。"
 
-#: btsync/backend.py:403
+#: btsync/backend.py
 #, python-brace-format
 msgid "Bluetooth adapter {adapter} is not in the Windows registry."
 msgstr "Bluetooth アダプター {adapter} が Windows レジストリにありません。"
 
-#: btsync/backend.py:433
+#: btsync/backend.py
 #, python-brace-format
 msgid "writing the Windows registry failed: {error}"
 msgstr "Windows レジストリへの書き込みに失敗しました: {error}"
 
-#: btsync/backend.py:483
+#: btsync/backend.py
 #, python-brace-format
 msgid "skipping unreadable {path}: {error}"
 msgstr "読み取れない {path} をスキップします: {error}"
 
-#: btsync/backend.py:539
+#: btsync/backend.py
 #, python-brace-format
 msgid "could not stop bluetooth.service: {error}"
 msgstr "bluetooth.service を停止できませんでした: {error}"
 
-#: btsync/backend.py:547
+#: btsync/backend.py
 #, python-brace-format
-msgid "could not restart bluetooth.service, run 'sudo systemctl start bluetooth': {error}"
-msgstr "bluetooth.service を再起動できませんでした。'sudo systemctl start bluetooth' を実行してください: {error}"
+msgid ""
+"could not restart bluetooth.service, run 'sudo systemctl start bluetooth': "
+"{error}"
+msgstr ""
+"bluetooth.service を再起動できませんでした。'sudo systemctl start bluetooth' "
+"を実行してください: {error}"
 
-#: btsync/backend.py:626
+#: btsync/backend.py
 #, python-brace-format
 msgid "bt-sync: scan failed: {error}"
 msgstr "bt-sync: スキャンに失敗しました: {error}"
 
-#: btsync/backend.py:643 btsync/backend.py:859
+#: btsync/backend.py
 #, python-brace-format
 msgid "imported into {system}: {device} ({kind})"
 msgstr "{system} にインポートしました: {device} ({kind})"
 
-#: btsync/backend.py:660
+#: btsync/backend.py
 #, python-brace-format
 msgid "exported to Windows: {device} ({kind})"
 msgstr "Windows にエクスポートしました: {device} ({kind})"
 
-#: btsync/backend.py:667
+#: btsync/backend.py
 msgid "Windows is mounted read-only."
 msgstr "Windows は読み取り専用でマウントされています。"
 
-#: btsync/backend.py:669
+#: btsync/backend.py
 #, python-brace-format
 msgid "Windows is mounted read-only (it is already mounted at {path})."
-msgstr "Windows は読み取り専用でマウントされています ({path} に既にマウントされています)。"
+msgstr ""
+"Windows は読み取り専用でマウントされています ({path} に既にマウントされていま"
+"す)。"
 
-#: btsync/backend.py:682
+#: btsync/backend.py
 #, python-brace-format
 msgid "could not enable the background scan: {error}"
 msgstr "バックグラウンドスキャンを有効にできませんでした: {error}"
 
-#: btsync/backend.py:685 btsync/gui.py:519
+#: btsync/backend.py btsync/gui.py
 msgid "Background scan enabled."
 msgstr "バックグラウンドスキャンを有効にしました。"
 
-#: btsync/backend.py:695
+#: btsync/backend.py
 msgid "bt-sync: another operation is running, scan skipped."
 msgstr "bt-sync: 別の処理が実行中のため、スキャンをスキップしました。"
 
-#: btsync/backend.py:697
+#: btsync/backend.py
 msgid "Scan completed."
 msgstr "スキャンが完了しました。"
 
-#: btsync/backend.py:697
+#: btsync/backend.py
 msgid "Scan completed with errors."
 msgstr "スキャンは完了しましたが、エラーがあります。"
 
-#: btsync/backend.py:705 btsync/backend.py:707 btsync/backend.py:713
+#: btsync/backend.py
 msgid "invalid request from the GUI."
 msgstr "GUI からの要求が無効です。"
 
-#: btsync/backend.py:749
+#: btsync/backend.py
 #, python-brace-format
 msgid "{device}: nothing to copy in that direction (already in sync?)."
 msgstr "{device}: その方向にコピーするものはありません (既に同期済み？)。"
 
-#: btsync/backend.py:776
+#: btsync/backend.py
 msgid "the output contains secret pairing keys: keep it private."
-msgstr "出力には秘密のペアリングキーが含まれています。他人に見せないでください。"
+msgstr ""
+"出力には秘密のペアリングキーが含まれています。他人に見せないでください。"
 
-#: btsync/backend.py:786 btsync/backend.py:848
+#: btsync/backend.py
 msgid "this is not a valid bt-sync key backup file."
 msgstr "有効な bt-sync のキーバックアップファイルではありません。"
 
-#: btsync/backend.py:873
+#: btsync/backend.py
 #, python-brace-format
 msgid "Adapters not present on this computer (skipped): {list}"
 msgstr "このコンピューターにないアダプター (スキップ): {list}"
 
-#: btsync/backend.py:875
+#: btsync/backend.py
 #, python-brace-format
 msgid "Already present: {n}"
 msgstr "既に存在: {n}"
 
-#: btsync/backend.py:876
+#: btsync/backend.py
 msgid "New"
 msgstr "新規"
 
-#: btsync/backend.py:876
+#: btsync/backend.py
 msgid "Different from this computer"
 msgstr "このコンピューターと異なる"
 
-#: btsync/backend.py:880
+#: btsync/backend.py
 msgid "Dry run: nothing was changed."
 msgstr "ドライラン: 何も変更していません。"
 
-#: btsync/backend.py:882
+#: btsync/backend.py
 msgid "Keys that differ were kept; use --overwrite to replace them."
-msgstr "異なるキーはそのままにしました。置き換えるには --overwrite を使ってください。"
+msgstr ""
+"異なるキーはそのままにしました。置き換えるには --overwrite を使ってください。"
 
-#: btsync/backend.py:886 btsync/backend.py:979
+#: btsync/backend.py
 #, python-brace-format
 msgid "error: {message}"
 msgstr "エラー: {message}"
 
-#: btsync/backend.py:893
+#: btsync/backend.py
 #, python-brace-format
 msgid "on Windows, missing on {system}"
 msgstr "Windows にあり、{system} にありません"
 
-#: btsync/backend.py:894
+#: btsync/backend.py
 #, python-brace-format
 msgid "on {system}, missing on Windows"
 msgstr "{system} にあり、Windows にありません"
 
-#: btsync/backend.py:895
+#: btsync/backend.py
 msgid "DIFFERENT keys on the two systems"
 msgstr "2 つのシステムでキーが異なります"
 
-#: btsync/backend.py:901
+#: btsync/backend.py
 msgid "the Windows key is newer"
 msgstr "Windows のキーの方が新しいです"
 
-#: btsync/backend.py:903
+#: btsync/backend.py
 #, python-brace-format
 msgid "the {system} key is newer"
 msgstr "{system} のキーの方が新しいです"
 
-#: btsync/backend.py:914 btsync/backend.py:957
+#: btsync/backend.py
 msgid "Everything is in sync."
 msgstr "すべて同期されています。"
 
-#: btsync/backend.py:927
+#: btsync/backend.py
 msgid "skip"
 msgstr "スキップ"
 
-#: btsync/backend.py:927
+#: btsync/backend.py
 msgid "ignore from now on"
 msgstr "今後は無視"
 
-#: btsync/backend.py:929
+#: btsync/backend.py
 #, python-brace-format
 msgid "import into {system}"
 msgstr "{system} にインポート"
 
-#: btsync/backend.py:932
+#: btsync/backend.py
 msgid "export to Windows"
 msgstr "Windows にエクスポート"
 
-#: btsync/backend.py:934
+#: btsync/backend.py
 msgid "(Windows is mounted read-only: cannot export)"
-msgstr "(Windows は読み取り専用でマウントされているため、エクスポートできません)"
+msgstr ""
+"(Windows は読み取り専用でマウントされているため、エクスポートできません)"
 
-#: btsync/backend.py:975
+#: btsync/backend.py
 #, python-brace-format
 msgid "backup of the Windows registry saved to {path}"
 msgstr "Windows レジストリのバックアップを {path} に保存しました"
 
-#: btsync/backend.py:1012
+#: btsync/backend.py
 #, python-brace-format
 msgid "bt-sync: error: {message}"
 msgstr "bt-sync: エラー: {message}"
 
-#: btsync/backend.py:1015
+#: btsync/backend.py
 msgid "Aborted, nothing was changed."
 msgstr "中止しました。何も変更していません。"
 
-#: btsync/gui.py:210 btsync/gui.py:354
+#: btsync/gui.py
 msgid "Settings"
 msgstr "設定"
 
-#: btsync/gui.py:214
+#: btsync/gui.py
 msgid "General"
 msgstr "一般"
 
-#: btsync/gui.py:217
+#: btsync/gui.py
 #, python-brace-format
 msgid "System default ({language})"
 msgstr "システムの既定 ({language})"
 
-#: btsync/gui.py:223
+#: btsync/gui.py
 msgid "Language:"
 msgstr "言語:"
 
-#: btsync/gui.py:224
+#: btsync/gui.py
 msgid "Start in tray at login"
 msgstr "ログイン時にトレイで起動"
 
-#: btsync/gui.py:228
+#: btsync/gui.py
 msgid "No system tray available on this desktop"
 msgstr "このデスクトップにはシステムトレイがありません"
 
-#: btsync/gui.py:230
+#: btsync/gui.py
 msgid "Show desktop notifications"
 msgstr "デスクトップ通知を表示"
 
-#: btsync/gui.py:237
+#: btsync/gui.py
 msgid "Pairing keys backup"
 msgstr "ペアリングキーのバックアップ"
 
-#: btsync/gui.py:239
-msgid "Save the pairing keys of this Linux system to a file and restore them later, for example after reinstalling Linux or on another Linux system installed on this computer."
-msgstr "この Linux のペアリングキーをファイルに保存し、後で復元できます。たとえば Linux を再インストールした後や、このコンピューターにインストールした別の Linux で使えます。"
+#: btsync/gui.py
+msgid ""
+"Save the pairing keys of this Linux system to a file and restore them later, "
+"for example after reinstalling Linux or on another Linux system installed on "
+"this computer."
+msgstr ""
+"この Linux のペアリングキーをファイルに保存し、後で復元できます。たとえば "
+"Linux を再インストールした後や、このコンピューターにインストールした別の "
+"Linux で使えます。"
 
-#: btsync/gui.py:245
+#: btsync/gui.py
 msgid "Export keys…"
 msgstr "キーをエクスポート…"
 
-#: btsync/gui.py:246
+#: btsync/gui.py
 msgid "Import keys…"
 msgstr "キーをインポート…"
 
-#: btsync/gui.py:253 btsync/gui.py:889
+#: btsync/gui.py
 msgid "The file contains secret keys: keep it private."
 msgstr "このファイルには秘密のキーが含まれています。他人に渡さないでください。"
 
-#: btsync/gui.py:346
+#: btsync/gui.py
 msgid "Bluetooth devices"
 msgstr "Bluetooth デバイス"
 
-#: btsync/gui.py:348
+#: btsync/gui.py
 msgid "Refresh"
 msgstr "更新"
 
-#: btsync/gui.py:349
+#: btsync/gui.py
 msgid "Rescan both systems now"
 msgstr "今すぐ両方のシステムを再スキャン"
 
-#: btsync/gui.py:370
+#: btsync/gui.py
 msgid "Enable now"
 msgstr "今すぐ有効にする"
 
-#: btsync/gui.py:412
+#: btsync/gui.py
 msgid "✔ in sync     → only on one system     ⚠ different keys (★ = newer key)"
-msgstr "✔ 同期済み     → 片方のシステムのみ     ⚠ キーが異なる (★ = 新しい方のキー)"
+msgstr ""
+"✔ 同期済み     → 片方のシステムのみ     ⚠ キーが異なる (★ = 新しい方のキー)"
 
-#: btsync/gui.py:418
+#: btsync/gui.py
 msgid "Archive: never sync these and don't notify me"
 msgstr "アーカイブ: これらは同期せず、通知もしない"
 
-#: btsync/gui.py:422
+#: btsync/gui.py
 msgid "Archive selected ↓"
 msgstr "選択をアーカイブ ↓"
 
-#: btsync/gui.py:423
+#: btsync/gui.py
 msgid "↑ Restore selected"
 msgstr "↑ 選択を元に戻す"
 
-#: btsync/gui.py:440
+#: btsync/gui.py
 msgid "Enjoying bt-sync? Buy me a 1UP!"
 msgstr "bt-sync を気に入ってくれましたか？ 1UP をおごってください！"
 
-#: btsync/gui.py:442
+#: btsync/gui.py
 msgid "Support me ☕"
 msgstr "応援する ☕"
 
-#: btsync/gui.py:454
+#: btsync/gui.py
 msgid "to Windows"
 msgstr "Windows へ"
 
-#: btsync/gui.py:455
+#: btsync/gui.py
 #, python-brace-format
 msgid "to {system}"
 msgstr "{system} へ"
 
-#: btsync/gui.py:456
+#: btsync/gui.py
 #, python-brace-format
 msgid "Copy the selected devices from {system} to Windows"
 msgstr "選択したデバイスを {system} から Windows にコピー"
 
-#: btsync/gui.py:458
+#: btsync/gui.py
 #, python-brace-format
 msgid "Copy the selected devices from Windows to {system}"
 msgstr "選択したデバイスを Windows から {system} にコピー"
 
-#: btsync/gui.py:465
+#: btsync/gui.py
 msgid "Open Bluetooth Sync"
 msgstr "Bluetooth Sync を開く"
 
-#: btsync/gui.py:466
+#: btsync/gui.py
 msgid "Refresh now"
 msgstr "今すぐ更新"
 
-#: btsync/gui.py:468
+#: btsync/gui.py
 msgid "Settings…"
 msgstr "設定…"
 
-#: btsync/gui.py:471
+#: btsync/gui.py
 msgid "Quit"
 msgstr "終了"
 
-#: btsync/gui.py:507
-msgid "The background scan is not enabled, so the device lists are not updated."
-msgstr "バックグラウンドスキャンが有効になっていないため、デバイス一覧は更新されません。"
+#: btsync/gui.py
+msgid ""
+"The background scan is not enabled, so the device lists are not updated."
+msgstr ""
+"バックグラウンドスキャンが有効になっていないため、デバイス一覧は更新されませ"
+"ん。"
 
-#: btsync/gui.py:538
+#: btsync/gui.py
 msgid "Cannot change the login autostart:"
 msgstr "ログイン時の自動起動を変更できません:"
 
-#: btsync/gui.py:549
+#: btsync/gui.py
 #, python-brace-format
 msgid "Could not open the browser: {url}"
 msgstr "ブラウザーを開けませんでした: {url}"
 
-#: btsync/gui.py:557
+#: btsync/gui.py
 msgid "No scan available yet"
 msgstr "まだスキャン結果がありません"
 
-#: btsync/gui.py:559
-msgid "The background scan has not run yet. If this persists, make sure it is enabled:"
-msgstr "バックグラウンドスキャンがまだ実行されていません。この状態が続く場合は、有効になっているか確認してください:"
+#: btsync/gui.py
+msgid ""
+"The background scan has not run yet. If this persists, make sure it is "
+"enabled:"
+msgstr ""
+"バックグラウンドスキャンがまだ実行されていません。この状態が続く場合は、有効"
+"になっているか確認してください:"
 
-#: btsync/gui.py:594
+#: btsync/gui.py
 #, python-brace-format
 msgid "{n} device to sync"
 msgid_plural "{n} devices to sync"
 msgstr[0] "同期が必要なデバイス: {n} 台"
 
-#: btsync/gui.py:596
+#: btsync/gui.py
 msgid "everything in sync"
 msgstr "すべて同期済み"
 
-#: btsync/gui.py:600
+#: btsync/gui.py
 #, python-brace-format
 msgid "To sync: {devices}"
 msgstr "同期が必要: {devices}"
 
-#: btsync/gui.py:631
+#: btsync/gui.py
 msgid "different keys"
 msgstr "キーが異なる"
 
-#: btsync/gui.py:633
+#: btsync/gui.py
 msgid "newer key"
 msgstr "新しい方のキー"
 
-#: btsync/gui.py:635
+#: btsync/gui.py
 msgid "older key"
 msgstr "古い方のキー"
 
-#: btsync/gui.py:637
+#: btsync/gui.py
 #, python-brace-format
 msgid "{kind} key changed on Windows: {wtime}, on {system}: {ltime}"
 msgstr "{kind} キーの変更日時 — Windows: {wtime}、{system}: {ltime}"
 
-#: btsync/gui.py:645
-msgid "Cannot tell which key is newer: copy from the system where you paired the device last."
-msgstr "どちらのキーが新しいか判断できません。最後にデバイスをペアリングしたシステムからコピーしてください。"
+#: btsync/gui.py
+msgid ""
+"Cannot tell which key is newer: copy from the system where you paired the "
+"device last."
+msgstr ""
+"どちらのキーが新しいか判断できません。最後にデバイスをペアリングしたシステム"
+"からコピーしてください。"
 
-#: btsync/gui.py:648
+#: btsync/gui.py
 msgid "only here"
 msgstr "ここだけ"
 
-#: btsync/gui.py:650
+#: btsync/gui.py
 msgid "partially synced"
 msgstr "一部同期済み"
 
-#: btsync/gui.py:652
+#: btsync/gui.py
 msgid "in sync"
 msgstr "同期済み"
 
-#: btsync/gui.py:674
+#: btsync/gui.py
 msgid "Could not read Windows:"
 msgstr "Windows を読み取れませんでした:"
 
-#: btsync/gui.py:677
-msgid "Linux and Windows use different Bluetooth adapters (different adapter addresses): nothing can be synced."
-msgstr "Linux と Windows で異なる Bluetooth アダプターを使っています (アダプターのアドレスが異なります)。同期できるものはありません。"
+#: btsync/gui.py
+msgid ""
+"Linux and Windows use different Bluetooth adapters (different adapter "
+"addresses): nothing can be synced."
+msgstr ""
+"Linux と Windows で異なる Bluetooth アダプターを使っています (アダプターのア"
+"ドレスが異なります)。同期できるものはありません。"
 
-#: btsync/gui.py:682
+#: btsync/gui.py
 #, python-brace-format
 msgid "Last scan: {time}"
 msgstr "最終スキャン: {time}"
 
-#: btsync/gui.py:706
+#: btsync/gui.py
 #, python-brace-format
-msgid "{devices}: the key on {system} is newer. You probably want to copy in the other direction."
-msgstr "{devices}: {system} のキーの方が新しいです。おそらく逆方向にコピーするべきです。"
+msgid ""
+"{devices}: the key on {system} is newer. You probably want to copy in the "
+"other direction."
+msgstr ""
+"{devices}: {system} のキーの方が新しいです。おそらく逆方向にコピーするべきで"
+"す。"
 
-#: btsync/gui.py:710
+#: btsync/gui.py
 msgid "The selected key is the newer one: copying it is probably right."
 msgstr "選択したキーの方が新しいです。これをコピーするのがおそらく正解です。"
 
-#: btsync/gui.py:744
+#: btsync/gui.py
 msgid "Cannot start a scan"
 msgstr "スキャンを開始できません"
 
-#: btsync/gui.py:745
+#: btsync/gui.py
 #, python-brace-format
 msgid "Cannot request a scan ({error}). Try:"
 msgstr "スキャンを要求できません ({error})。次を試してください:"
 
-#: btsync/gui.py:751
+#: btsync/gui.py
 msgid "Scanning…"
 msgstr "スキャン中…"
 
-#: btsync/gui.py:758
+#: btsync/gui.py
 msgid "The scan did not answer"
 msgstr "スキャンが応答しませんでした"
 
-#: btsync/gui.py:763
+#: btsync/gui.py
 msgid "The scan service did not answer. Make sure it is enabled:"
-msgstr "スキャンサービスが応答しませんでした。有効になっているか確認してください:"
+msgstr ""
+"スキャンサービスが応答しませんでした。有効になっているか確認してください:"
 
-#: btsync/gui.py:780
-msgid "Could not start pkexec. Is polkit installed and is a polkit authentication agent running?"
-msgstr "pkexec を起動できませんでした。polkit がインストールされ、polkit 認証エージェントが動作していますか？"
+#: btsync/gui.py
+msgid ""
+"Could not start pkexec. Is polkit installed and is a polkit authentication "
+"agent running?"
+msgstr ""
+"pkexec を起動できませんでした。polkit がインストールされ、polkit 認証エージェ"
+"ントが動作していますか？"
 
-#: btsync/gui.py:792
+#: btsync/gui.py
 msgid "Authentication cancelled or not authorized"
 msgstr "認証がキャンセルされたか、許可されていません"
 
-#: btsync/gui.py:798
+#: btsync/gui.py
 #, python-brace-format
 msgid "Unexpected answer from {helper} (exit code {code})."
 msgstr "{helper} から予期しない応答がありました (終了コード {code})。"
 
-#: btsync/gui.py:814
+#: btsync/gui.py
 msgid "Working…"
 msgstr "処理中…"
 
-#: btsync/gui.py:827
+#: btsync/gui.py
 #, python-brace-format
 msgid ""
 "The keys of {devices} differ between the two systems.\n"
@@ -529,85 +597,89 @@ msgstr ""
 "{devices} のキーは 2 つのシステムで異なります。\n"
 "{system} のキーが上書きされます。"
 
-#: btsync/gui.py:832
+#: btsync/gui.py
 #, python-brace-format
-msgid "Careful: for {devices} the key you are about to overwrite is the newer one."
+msgid ""
+"Careful: for {devices} the key you are about to overwrite is the newer one."
 msgstr "注意: {devices} では、上書きしようとしているキーの方が新しいです。"
 
-#: btsync/gui.py:835
+#: btsync/gui.py
 msgid "Overwrite the keys?"
 msgstr "キーを上書きしますか？"
 
-#: btsync/gui.py:836
+#: btsync/gui.py
 msgid "Continue?"
 msgstr "続行しますか？"
 
-#: btsync/gui.py:850 btsync/gui.py:854 btsync/gui.py:957 btsync/gui.py:961
+#: btsync/gui.py
 msgid "Done:"
 msgstr "完了:"
 
-#: btsync/gui.py:851 btsync/gui.py:958
+#: btsync/gui.py
 msgid "Problems:"
 msgstr "問題:"
 
-#: btsync/gui.py:860 btsync/gui.py:886
+#: btsync/gui.py
 msgid "Export pairing keys"
 msgstr "ペアリングキーのエクスポート"
 
-#: btsync/gui.py:861 btsync/gui.py:893
+#: btsync/gui.py
 msgid "bt-sync key backup"
 msgstr "bt-sync キーバックアップ"
 
-#: btsync/gui.py:883
+#: btsync/gui.py
 #, python-brace-format
 msgid "Cannot write {path}: {error}"
 msgstr "{path} に書き込めません: {error}"
 
-#: btsync/gui.py:887
+#: btsync/gui.py
 #, python-brace-format
 msgid "Exported {n} pairing key to:"
 msgid_plural "Exported {n} pairing keys to:"
 msgstr[0] "{n} 個のペアリングキーをエクスポートしました:"
 
-#: btsync/gui.py:892 btsync/gui.py:902 btsync/gui.py:912 btsync/gui.py:955
+#: btsync/gui.py
 msgid "Import pairing keys"
 msgstr "ペアリングキーのインポート"
 
-#: btsync/gui.py:903
+#: btsync/gui.py
 msgid "This is not a valid bt-sync key backup file."
 msgstr "有効な bt-sync のキーバックアップファイルではありません。"
 
-#: btsync/gui.py:918
+#: btsync/gui.py
 #, python-brace-format
 msgid "Skipped: these Bluetooth adapters are not on this computer: {list}"
-msgstr "スキップ: 次の Bluetooth アダプターはこのコンピューターにありません: {list}"
+msgstr ""
+"スキップ: 次の Bluetooth アダプターはこのコンピューターにありません: {list}"
 
-#: btsync/gui.py:924
+#: btsync/gui.py
 #, python-brace-format
 msgid "Nothing to import: the {n} key in the file is already present."
 msgid_plural "Nothing to import: the {n} keys in the file are already present."
-msgstr[0] "インポートするものはありません: ファイル内の {n} 個のキーはすべて既に存在します。"
+msgstr[0] ""
+"インポートするものはありません: ファイル内の {n} 個のキーはすべて既に存在しま"
+"す。"
 
-#: btsync/gui.py:930
+#: btsync/gui.py
 #, python-brace-format
 msgid "{n} new key will be imported:"
 msgid_plural "{n} new keys will be imported:"
 msgstr[0] "{n} 個の新しいキーをインポートします:"
 
-#: btsync/gui.py:934
+#: btsync/gui.py
 #, python-brace-format
 msgid "{n} key is different from the one on this computer:"
 msgid_plural "{n} keys are different from the ones on this computer:"
 msgstr[0] "{n} 個のキーがこのコンピューターのものと異なります:"
 
-#: btsync/gui.py:937
+#: btsync/gui.py
 msgid "Bluetooth will restart for a moment."
 msgstr "Bluetooth が少しの間再起動します。"
 
-#: btsync/gui.py:939
+#: btsync/gui.py
 msgid "Import new keys only"
 msgstr "新しいキーのみインポート"
 
-#: btsync/gui.py:941
+#: btsync/gui.py
 msgid "Import and overwrite"
 msgstr "インポートして上書き"

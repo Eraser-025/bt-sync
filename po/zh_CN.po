@@ -6,6 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bt-sync 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/Eraser-025/bt-sync/issues\n"
+"POT-Creation-Date: 2026-11-02 03:24+0100\n"
 "PO-Revision-Date: 2026-11-02 03:13+0100\n"
 "Last-Translator: Eraser-025\n"
 "Language-Team: Chinese (simplified)\n"
@@ -15,512 +16,551 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: btsync/backend.py:59
-msgid "This usually means Windows was hibernated or Fast Startup is enabled: in Windows run 'powercfg /h off' from an administrator prompt, then use Shut down (not Restart) before booting Linux."
-msgstr "这通常表示 Windows 处于休眠状态或启用了快速启动：请在 Windows 的管理员命令提示符中运行 'powercfg /h off'，然后在启动 Linux 前使用“关机”（而不是“重启”）。"
+#: btsync/backend.py
+msgid ""
+"This usually means Windows was hibernated or Fast Startup is enabled: in "
+"Windows run 'powercfg /h off' from an administrator prompt, then use Shut "
+"down (not Restart) before booting Linux."
+msgstr ""
+"这通常表示 Windows 处于休眠状态或启用了快速启动：请在 Windows 的管理员命令提"
+"示符中运行 'powercfg /h off'，然后在启动 Linux 前使用“关机”（而不是“重启”）。"
 
-#: btsync/backend.py:90 btsync/backend.py:758
+#: btsync/backend.py
 #, python-brace-format
 msgid "unexpected error: {error}"
 msgstr "意外错误：{error}"
 
-#: btsync/backend.py:94
+#: btsync/backend.py
 #, python-brace-format
 msgid "bt-sync: warning: {message}"
 msgstr "bt-sync：警告：{message}"
 
-#: btsync/backend.py:108
+#: btsync/backend.py
 #, python-brace-format
 msgid "ignoring invalid {path}: {error}"
 msgstr "忽略无效的 {path}：{error}"
 
-#: btsync/backend.py:145
+#: btsync/backend.py
 msgid "this command must be run as root (try: sudo bt-sync ...)."
 msgstr "此命令必须以 root 身份运行（试试：sudo bt-sync ...）。"
 
-#: btsync/backend.py:177
+#: btsync/backend.py
 msgid "another bt-sync operation is still running; try again in a minute."
 msgstr "另一个 bt-sync 操作仍在运行；请一分钟后重试。"
 
-#: btsync/backend.py:227
+#: btsync/backend.py
 #, python-brace-format
 msgid "lsblk failed: {error}"
 msgstr "lsblk 失败：{error}"
 
-#: btsync/backend.py:247
+#: btsync/backend.py
 #, python-brace-format
 msgid "Windows partition not found: no NTFS partition contains {path}."
 msgstr "未找到 Windows 分区：没有任何 NTFS 分区包含 {path}。"
 
-#: btsync/backend.py:250
-msgid "A BitLocker-encrypted partition was detected: bt-sync cannot read it. Turn off BitLocker (or device encryption) on the Windows system drive."
-msgstr "检测到 BitLocker 加密的分区：bt-sync 无法读取。请在 Windows 系统盘上关闭 BitLocker（或设备加密）。"
+#: btsync/backend.py
+msgid ""
+"A BitLocker-encrypted partition was detected: bt-sync cannot read it. Turn "
+"off BitLocker (or device encryption) on the Windows system drive."
+msgstr ""
+"检测到 BitLocker 加密的分区：bt-sync 无法读取。请在 Windows 系统盘上关闭 "
+"BitLocker（或设备加密）。"
 
-#: btsync/backend.py:254
+#: btsync/backend.py
 msgid "No NTFS partitions were detected at all."
 msgstr "未检测到任何 NTFS 分区。"
 
-#: btsync/backend.py:256
+#: btsync/backend.py
 #, python-brace-format
 msgid "Some NTFS partitions could not be mounted ({errors})."
 msgstr "部分 NTFS 分区无法挂载（{errors}）。"
 
-#: btsync/backend.py:289
-msgid "the Python bindings of hivex are missing: install 'hivex' (Arch) or 'python3-hivex' (Debian, Ubuntu, Fedora)."
-msgstr "缺少 hivex 的 Python 绑定：请安装 'hivex'（Arch）或 'python3-hivex'（Debian、Ubuntu、Fedora）。"
+#: btsync/backend.py
+msgid ""
+"the Python bindings of hivex are missing: install 'hivex' (Arch) or 'python3-"
+"hivex' (Debian, Ubuntu, Fedora)."
+msgstr ""
+"缺少 hivex 的 Python 绑定：请安装 'hivex'（Arch）或 'python3-hivex'（Debian、"
+"Ubuntu、Fedora）。"
 
-#: btsync/backend.py:295
+#: btsync/backend.py
 #, python-brace-format
 msgid "cannot open the Windows registry {path}: {error}"
 msgstr "无法打开 Windows 注册表 {path}：{error}"
 
-#: btsync/backend.py:301
-msgid "unexpected Windows registry layout (SYSTEM\\Select\\Current is missing)."
+#: btsync/backend.py
+msgid ""
+"unexpected Windows registry layout (SYSTEM\\Select\\Current is missing)."
 msgstr "Windows 注册表结构异常（缺少 SYSTEM\\Select\\Current）。"
 
-#: btsync/backend.py:309
+#: btsync/backend.py
 #, python-brace-format
-msgid "Windows registry key not found: {key}. Has Bluetooth ever been used on this Windows install?"
+msgid ""
+"Windows registry key not found: {key}. Has Bluetooth ever been used on this "
+"Windows install?"
 msgstr "未找到 Windows 注册表项：{key}。这个 Windows 系统中使用过蓝牙吗？"
 
-#: btsync/backend.py:315
-msgid "no Bluetooth pairing keys in the Windows registry (pair at least one device in Windows first)."
-msgstr "Windows 注册表中没有蓝牙配对密钥（请先在 Windows 中配对至少一个设备）。"
+#: btsync/backend.py
+msgid ""
+"no Bluetooth pairing keys in the Windows registry (pair at least one device "
+"in Windows first)."
+msgstr ""
+"Windows 注册表中没有蓝牙配对密钥（请先在 Windows 中配对至少一个设备）。"
 
-#: btsync/backend.py:403
+#: btsync/backend.py
 #, python-brace-format
 msgid "Bluetooth adapter {adapter} is not in the Windows registry."
 msgstr "蓝牙适配器 {adapter} 不在 Windows 注册表中。"
 
-#: btsync/backend.py:433
+#: btsync/backend.py
 #, python-brace-format
 msgid "writing the Windows registry failed: {error}"
 msgstr "写入 Windows 注册表失败：{error}"
 
-#: btsync/backend.py:483
+#: btsync/backend.py
 #, python-brace-format
 msgid "skipping unreadable {path}: {error}"
 msgstr "跳过无法读取的 {path}：{error}"
 
-#: btsync/backend.py:539
+#: btsync/backend.py
 #, python-brace-format
 msgid "could not stop bluetooth.service: {error}"
 msgstr "无法停止 bluetooth.service：{error}"
 
-#: btsync/backend.py:547
+#: btsync/backend.py
 #, python-brace-format
-msgid "could not restart bluetooth.service, run 'sudo systemctl start bluetooth': {error}"
-msgstr "无法重新启动 bluetooth.service，请运行 'sudo systemctl start bluetooth'：{error}"
+msgid ""
+"could not restart bluetooth.service, run 'sudo systemctl start bluetooth': "
+"{error}"
+msgstr ""
+"无法重新启动 bluetooth.service，请运行 'sudo systemctl start bluetooth'："
+"{error}"
 
-#: btsync/backend.py:626
+#: btsync/backend.py
 #, python-brace-format
 msgid "bt-sync: scan failed: {error}"
 msgstr "bt-sync：扫描失败：{error}"
 
-#: btsync/backend.py:643 btsync/backend.py:859
+#: btsync/backend.py
 #, python-brace-format
 msgid "imported into {system}: {device} ({kind})"
 msgstr "已导入到 {system}：{device}（{kind}）"
 
-#: btsync/backend.py:660
+#: btsync/backend.py
 #, python-brace-format
 msgid "exported to Windows: {device} ({kind})"
 msgstr "已导出到 Windows：{device}（{kind}）"
 
-#: btsync/backend.py:667
+#: btsync/backend.py
 msgid "Windows is mounted read-only."
 msgstr "Windows 以只读方式挂载。"
 
-#: btsync/backend.py:669
+#: btsync/backend.py
 #, python-brace-format
 msgid "Windows is mounted read-only (it is already mounted at {path})."
 msgstr "Windows 以只读方式挂载（已挂载在 {path}）。"
 
-#: btsync/backend.py:682
+#: btsync/backend.py
 #, python-brace-format
 msgid "could not enable the background scan: {error}"
 msgstr "无法启用后台扫描：{error}"
 
-#: btsync/backend.py:685 btsync/gui.py:519
+#: btsync/backend.py btsync/gui.py
 msgid "Background scan enabled."
 msgstr "后台扫描已启用。"
 
-#: btsync/backend.py:695
+#: btsync/backend.py
 msgid "bt-sync: another operation is running, scan skipped."
 msgstr "bt-sync：另一个操作正在运行，已跳过扫描。"
 
-#: btsync/backend.py:697
+#: btsync/backend.py
 msgid "Scan completed."
 msgstr "扫描完成。"
 
-#: btsync/backend.py:697
+#: btsync/backend.py
 msgid "Scan completed with errors."
 msgstr "扫描完成，但有错误。"
 
-#: btsync/backend.py:705 btsync/backend.py:707 btsync/backend.py:713
+#: btsync/backend.py
 msgid "invalid request from the GUI."
 msgstr "来自图形界面的请求无效。"
 
-#: btsync/backend.py:749
+#: btsync/backend.py
 #, python-brace-format
 msgid "{device}: nothing to copy in that direction (already in sync?)."
 msgstr "{device}：该方向没有需要复制的内容（已经同步了？）。"
 
-#: btsync/backend.py:776
+#: btsync/backend.py
 msgid "the output contains secret pairing keys: keep it private."
 msgstr "输出包含机密的配对密钥：请妥善保管。"
 
-#: btsync/backend.py:786 btsync/backend.py:848
+#: btsync/backend.py
 msgid "this is not a valid bt-sync key backup file."
 msgstr "这不是有效的 bt-sync 密钥备份文件。"
 
-#: btsync/backend.py:873
+#: btsync/backend.py
 #, python-brace-format
 msgid "Adapters not present on this computer (skipped): {list}"
 msgstr "本机上不存在的适配器（已跳过）：{list}"
 
-#: btsync/backend.py:875
+#: btsync/backend.py
 #, python-brace-format
 msgid "Already present: {n}"
 msgstr "已存在：{n}"
 
-#: btsync/backend.py:876
+#: btsync/backend.py
 msgid "New"
 msgstr "新增"
 
-#: btsync/backend.py:876
+#: btsync/backend.py
 msgid "Different from this computer"
 msgstr "与本机不同"
 
-#: btsync/backend.py:880
+#: btsync/backend.py
 msgid "Dry run: nothing was changed."
 msgstr "试运行：未做任何更改。"
 
-#: btsync/backend.py:882
+#: btsync/backend.py
 msgid "Keys that differ were kept; use --overwrite to replace them."
 msgstr "不同的密钥已保留；使用 --overwrite 可替换它们。"
 
-#: btsync/backend.py:886 btsync/backend.py:979
+#: btsync/backend.py
 #, python-brace-format
 msgid "error: {message}"
 msgstr "错误：{message}"
 
-#: btsync/backend.py:893
+#: btsync/backend.py
 #, python-brace-format
 msgid "on Windows, missing on {system}"
 msgstr "在 Windows 上，{system} 上没有"
 
-#: btsync/backend.py:894
+#: btsync/backend.py
 #, python-brace-format
 msgid "on {system}, missing on Windows"
 msgstr "在 {system} 上，Windows 上没有"
 
-#: btsync/backend.py:895
+#: btsync/backend.py
 msgid "DIFFERENT keys on the two systems"
 msgstr "两个系统上的密钥不同"
 
-#: btsync/backend.py:901
+#: btsync/backend.py
 msgid "the Windows key is newer"
 msgstr "Windows 上的密钥更新"
 
-#: btsync/backend.py:903
+#: btsync/backend.py
 #, python-brace-format
 msgid "the {system} key is newer"
 msgstr "{system} 上的密钥更新"
 
-#: btsync/backend.py:914 btsync/backend.py:957
+#: btsync/backend.py
 msgid "Everything is in sync."
 msgstr "全部已同步。"
 
-#: btsync/backend.py:927
+#: btsync/backend.py
 msgid "skip"
 msgstr "跳过"
 
-#: btsync/backend.py:927
+#: btsync/backend.py
 msgid "ignore from now on"
 msgstr "以后忽略"
 
-#: btsync/backend.py:929
+#: btsync/backend.py
 #, python-brace-format
 msgid "import into {system}"
 msgstr "导入到 {system}"
 
-#: btsync/backend.py:932
+#: btsync/backend.py
 msgid "export to Windows"
 msgstr "导出到 Windows"
 
-#: btsync/backend.py:934
+#: btsync/backend.py
 msgid "(Windows is mounted read-only: cannot export)"
 msgstr "（Windows 以只读方式挂载：无法导出）"
 
-#: btsync/backend.py:975
+#: btsync/backend.py
 #, python-brace-format
 msgid "backup of the Windows registry saved to {path}"
 msgstr "Windows 注册表备份已保存到 {path}"
 
-#: btsync/backend.py:1012
+#: btsync/backend.py
 #, python-brace-format
 msgid "bt-sync: error: {message}"
 msgstr "bt-sync：错误：{message}"
 
-#: btsync/backend.py:1015
+#: btsync/backend.py
 msgid "Aborted, nothing was changed."
 msgstr "已中止，未做任何更改。"
 
-#: btsync/gui.py:210 btsync/gui.py:354
+#: btsync/gui.py
 msgid "Settings"
 msgstr "设置"
 
-#: btsync/gui.py:214
+#: btsync/gui.py
 msgid "General"
 msgstr "常规"
 
-#: btsync/gui.py:217
+#: btsync/gui.py
 #, python-brace-format
 msgid "System default ({language})"
 msgstr "系统默认（{language}）"
 
-#: btsync/gui.py:223
+#: btsync/gui.py
 msgid "Language:"
 msgstr "语言："
 
-#: btsync/gui.py:224
+#: btsync/gui.py
 msgid "Start in tray at login"
 msgstr "登录时在托盘中启动"
 
-#: btsync/gui.py:228
+#: btsync/gui.py
 msgid "No system tray available on this desktop"
 msgstr "此桌面没有系统托盘"
 
-#: btsync/gui.py:230
+#: btsync/gui.py
 msgid "Show desktop notifications"
 msgstr "显示桌面通知"
 
-#: btsync/gui.py:237
+#: btsync/gui.py
 msgid "Pairing keys backup"
 msgstr "配对密钥备份"
 
-#: btsync/gui.py:239
-msgid "Save the pairing keys of this Linux system to a file and restore them later, for example after reinstalling Linux or on another Linux system installed on this computer."
-msgstr "将此 Linux 系统的配对密钥保存到文件中，以后再恢复，例如重装 Linux 之后，或在本机安装的另一个 Linux 系统上。"
+#: btsync/gui.py
+msgid ""
+"Save the pairing keys of this Linux system to a file and restore them later, "
+"for example after reinstalling Linux or on another Linux system installed on "
+"this computer."
+msgstr ""
+"将此 Linux 系统的配对密钥保存到文件中，以后再恢复，例如重装 Linux 之后，或在"
+"本机安装的另一个 Linux 系统上。"
 
-#: btsync/gui.py:245
+#: btsync/gui.py
 msgid "Export keys…"
 msgstr "导出密钥…"
 
-#: btsync/gui.py:246
+#: btsync/gui.py
 msgid "Import keys…"
 msgstr "导入密钥…"
 
-#: btsync/gui.py:253 btsync/gui.py:889
+#: btsync/gui.py
 msgid "The file contains secret keys: keep it private."
 msgstr "该文件包含机密密钥：请妥善保管。"
 
-#: btsync/gui.py:346
+#: btsync/gui.py
 msgid "Bluetooth devices"
 msgstr "蓝牙设备"
 
-#: btsync/gui.py:348
+#: btsync/gui.py
 msgid "Refresh"
 msgstr "刷新"
 
-#: btsync/gui.py:349
+#: btsync/gui.py
 msgid "Rescan both systems now"
 msgstr "立即重新扫描两个系统"
 
-#: btsync/gui.py:370
+#: btsync/gui.py
 msgid "Enable now"
 msgstr "立即启用"
 
-#: btsync/gui.py:412
+#: btsync/gui.py
 msgid "✔ in sync     → only on one system     ⚠ different keys (★ = newer key)"
 msgstr "✔ 已同步     → 仅在一个系统上     ⚠ 密钥不同（★ = 较新的密钥）"
 
-#: btsync/gui.py:418
+#: btsync/gui.py
 msgid "Archive: never sync these and don't notify me"
 msgstr "归档：不同步这些设备，也不通知我"
 
-#: btsync/gui.py:422
+#: btsync/gui.py
 msgid "Archive selected ↓"
 msgstr "归档所选 ↓"
 
-#: btsync/gui.py:423
+#: btsync/gui.py
 msgid "↑ Restore selected"
 msgstr "↑ 恢复所选"
 
-#: btsync/gui.py:440
+#: btsync/gui.py
 msgid "Enjoying bt-sync? Buy me a 1UP!"
 msgstr "喜欢 bt-sync 吗？请我吃个 1UP 蘑菇吧！"
 
-#: btsync/gui.py:442
+#: btsync/gui.py
 msgid "Support me ☕"
 msgstr "支持我 ☕"
 
-#: btsync/gui.py:454
+#: btsync/gui.py
 msgid "to Windows"
 msgstr "到 Windows"
 
-#: btsync/gui.py:455
+#: btsync/gui.py
 #, python-brace-format
 msgid "to {system}"
 msgstr "到 {system}"
 
-#: btsync/gui.py:456
+#: btsync/gui.py
 #, python-brace-format
 msgid "Copy the selected devices from {system} to Windows"
 msgstr "将所选设备从 {system} 复制到 Windows"
 
-#: btsync/gui.py:458
+#: btsync/gui.py
 #, python-brace-format
 msgid "Copy the selected devices from Windows to {system}"
 msgstr "将所选设备从 Windows 复制到 {system}"
 
-#: btsync/gui.py:465
+#: btsync/gui.py
 msgid "Open Bluetooth Sync"
 msgstr "打开 Bluetooth Sync"
 
-#: btsync/gui.py:466
+#: btsync/gui.py
 msgid "Refresh now"
 msgstr "立即刷新"
 
-#: btsync/gui.py:468
+#: btsync/gui.py
 msgid "Settings…"
 msgstr "设置…"
 
-#: btsync/gui.py:471
+#: btsync/gui.py
 msgid "Quit"
 msgstr "退出"
 
-#: btsync/gui.py:507
-msgid "The background scan is not enabled, so the device lists are not updated."
+#: btsync/gui.py
+msgid ""
+"The background scan is not enabled, so the device lists are not updated."
 msgstr "后台扫描未启用，因此设备列表不会更新。"
 
-#: btsync/gui.py:538
+#: btsync/gui.py
 msgid "Cannot change the login autostart:"
 msgstr "无法更改登录时自动启动："
 
-#: btsync/gui.py:549
+#: btsync/gui.py
 #, python-brace-format
 msgid "Could not open the browser: {url}"
 msgstr "无法打开浏览器：{url}"
 
-#: btsync/gui.py:557
+#: btsync/gui.py
 msgid "No scan available yet"
 msgstr "尚无扫描结果"
 
-#: btsync/gui.py:559
-msgid "The background scan has not run yet. If this persists, make sure it is enabled:"
+#: btsync/gui.py
+msgid ""
+"The background scan has not run yet. If this persists, make sure it is "
+"enabled:"
 msgstr "后台扫描尚未运行。如果一直如此，请确认已启用："
 
-#: btsync/gui.py:594
+#: btsync/gui.py
 #, python-brace-format
 msgid "{n} device to sync"
 msgid_plural "{n} devices to sync"
 msgstr[0] "{n} 个设备待同步"
 
-#: btsync/gui.py:596
+#: btsync/gui.py
 msgid "everything in sync"
 msgstr "全部已同步"
 
-#: btsync/gui.py:600
+#: btsync/gui.py
 #, python-brace-format
 msgid "To sync: {devices}"
 msgstr "待同步：{devices}"
 
-#: btsync/gui.py:631
+#: btsync/gui.py
 msgid "different keys"
 msgstr "密钥不同"
 
-#: btsync/gui.py:633
+#: btsync/gui.py
 msgid "newer key"
 msgstr "较新的密钥"
 
-#: btsync/gui.py:635
+#: btsync/gui.py
 msgid "older key"
 msgstr "较旧的密钥"
 
-#: btsync/gui.py:637
+#: btsync/gui.py
 #, python-brace-format
 msgid "{kind} key changed on Windows: {wtime}, on {system}: {ltime}"
 msgstr "{kind} 密钥修改时间 — Windows：{wtime}，{system}：{ltime}"
 
-#: btsync/gui.py:645
-msgid "Cannot tell which key is newer: copy from the system where you paired the device last."
+#: btsync/gui.py
+msgid ""
+"Cannot tell which key is newer: copy from the system where you paired the "
+"device last."
 msgstr "无法判断哪个密钥更新：请从最后一次配对该设备的系统复制。"
 
-#: btsync/gui.py:648
+#: btsync/gui.py
 msgid "only here"
 msgstr "仅在此处"
 
-#: btsync/gui.py:650
+#: btsync/gui.py
 msgid "partially synced"
 msgstr "部分同步"
 
-#: btsync/gui.py:652
+#: btsync/gui.py
 msgid "in sync"
 msgstr "已同步"
 
-#: btsync/gui.py:674
+#: btsync/gui.py
 msgid "Could not read Windows:"
 msgstr "无法读取 Windows："
 
-#: btsync/gui.py:677
-msgid "Linux and Windows use different Bluetooth adapters (different adapter addresses): nothing can be synced."
+#: btsync/gui.py
+msgid ""
+"Linux and Windows use different Bluetooth adapters (different adapter "
+"addresses): nothing can be synced."
 msgstr "Linux 和 Windows 使用的蓝牙适配器不同（适配器地址不同）：无法同步。"
 
-#: btsync/gui.py:682
+#: btsync/gui.py
 #, python-brace-format
 msgid "Last scan: {time}"
 msgstr "上次扫描：{time}"
 
-#: btsync/gui.py:706
+#: btsync/gui.py
 #, python-brace-format
-msgid "{devices}: the key on {system} is newer. You probably want to copy in the other direction."
+msgid ""
+"{devices}: the key on {system} is newer. You probably want to copy in the "
+"other direction."
 msgstr "{devices}：{system} 上的密钥更新。你可能需要反方向复制。"
 
-#: btsync/gui.py:710
+#: btsync/gui.py
 msgid "The selected key is the newer one: copying it is probably right."
 msgstr "所选密钥是较新的：复制它可能是正确的。"
 
-#: btsync/gui.py:744
+#: btsync/gui.py
 msgid "Cannot start a scan"
 msgstr "无法开始扫描"
 
-#: btsync/gui.py:745
+#: btsync/gui.py
 #, python-brace-format
 msgid "Cannot request a scan ({error}). Try:"
 msgstr "无法请求扫描（{error}）。试试："
 
-#: btsync/gui.py:751
+#: btsync/gui.py
 msgid "Scanning…"
 msgstr "正在扫描…"
 
-#: btsync/gui.py:758
+#: btsync/gui.py
 msgid "The scan did not answer"
 msgstr "扫描没有响应"
 
-#: btsync/gui.py:763
+#: btsync/gui.py
 msgid "The scan service did not answer. Make sure it is enabled:"
 msgstr "扫描服务没有响应。请确认已启用："
 
-#: btsync/gui.py:780
-msgid "Could not start pkexec. Is polkit installed and is a polkit authentication agent running?"
+#: btsync/gui.py
+msgid ""
+"Could not start pkexec. Is polkit installed and is a polkit authentication "
+"agent running?"
 msgstr "无法启动 pkexec。是否已安装 polkit 并运行了 polkit 认证代理？"
 
-#: btsync/gui.py:792
+#: btsync/gui.py
 msgid "Authentication cancelled or not authorized"
 msgstr "认证已取消或未获授权"
 
-#: btsync/gui.py:798
+#: btsync/gui.py
 #, python-brace-format
 msgid "Unexpected answer from {helper} (exit code {code})."
 msgstr "{helper} 返回了意外结果（退出码 {code}）。"
 
-#: btsync/gui.py:814
+#: btsync/gui.py
 msgid "Working…"
 msgstr "处理中…"
 
-#: btsync/gui.py:827
+#: btsync/gui.py
 #, python-brace-format
 msgid ""
 "The keys of {devices} differ between the two systems.\n"
@@ -529,85 +569,86 @@ msgstr ""
 "{devices} 的密钥在两个系统上不同。\n"
 "{system} 上的密钥将被覆盖。"
 
-#: btsync/gui.py:832
+#: btsync/gui.py
 #, python-brace-format
-msgid "Careful: for {devices} the key you are about to overwrite is the newer one."
+msgid ""
+"Careful: for {devices} the key you are about to overwrite is the newer one."
 msgstr "注意：对于 {devices}，你将要覆盖的是较新的密钥。"
 
-#: btsync/gui.py:835
+#: btsync/gui.py
 msgid "Overwrite the keys?"
 msgstr "覆盖密钥？"
 
-#: btsync/gui.py:836
+#: btsync/gui.py
 msgid "Continue?"
 msgstr "继续吗？"
 
-#: btsync/gui.py:850 btsync/gui.py:854 btsync/gui.py:957 btsync/gui.py:961
+#: btsync/gui.py
 msgid "Done:"
 msgstr "已完成："
 
-#: btsync/gui.py:851 btsync/gui.py:958
+#: btsync/gui.py
 msgid "Problems:"
 msgstr "问题："
 
-#: btsync/gui.py:860 btsync/gui.py:886
+#: btsync/gui.py
 msgid "Export pairing keys"
 msgstr "导出配对密钥"
 
-#: btsync/gui.py:861 btsync/gui.py:893
+#: btsync/gui.py
 msgid "bt-sync key backup"
 msgstr "bt-sync 密钥备份"
 
-#: btsync/gui.py:883
+#: btsync/gui.py
 #, python-brace-format
 msgid "Cannot write {path}: {error}"
 msgstr "无法写入 {path}：{error}"
 
-#: btsync/gui.py:887
+#: btsync/gui.py
 #, python-brace-format
 msgid "Exported {n} pairing key to:"
 msgid_plural "Exported {n} pairing keys to:"
 msgstr[0] "已将 {n} 个配对密钥导出到："
 
-#: btsync/gui.py:892 btsync/gui.py:902 btsync/gui.py:912 btsync/gui.py:955
+#: btsync/gui.py
 msgid "Import pairing keys"
 msgstr "导入配对密钥"
 
-#: btsync/gui.py:903
+#: btsync/gui.py
 msgid "This is not a valid bt-sync key backup file."
 msgstr "这不是有效的 bt-sync 密钥备份文件。"
 
-#: btsync/gui.py:918
+#: btsync/gui.py
 #, python-brace-format
 msgid "Skipped: these Bluetooth adapters are not on this computer: {list}"
 msgstr "已跳过：本机上没有这些蓝牙适配器：{list}"
 
-#: btsync/gui.py:924
+#: btsync/gui.py
 #, python-brace-format
 msgid "Nothing to import: the {n} key in the file is already present."
 msgid_plural "Nothing to import: the {n} keys in the file are already present."
 msgstr[0] "没有需要导入的内容：文件中的 {n} 个密钥都已存在。"
 
-#: btsync/gui.py:930
+#: btsync/gui.py
 #, python-brace-format
 msgid "{n} new key will be imported:"
 msgid_plural "{n} new keys will be imported:"
 msgstr[0] "将导入 {n} 个新密钥："
 
-#: btsync/gui.py:934
+#: btsync/gui.py
 #, python-brace-format
 msgid "{n} key is different from the one on this computer:"
 msgid_plural "{n} keys are different from the ones on this computer:"
 msgstr[0] "{n} 个密钥与本机上的不同："
 
-#: btsync/gui.py:937
+#: btsync/gui.py
 msgid "Bluetooth will restart for a moment."
 msgstr "蓝牙将短暂重启。"
 
-#: btsync/gui.py:939
+#: btsync/gui.py
 msgid "Import new keys only"
 msgstr "仅导入新密钥"
 
-#: btsync/gui.py:941
+#: btsync/gui.py
 msgid "Import and overwrite"
 msgstr "导入并覆盖"
