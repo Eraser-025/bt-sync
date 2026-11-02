@@ -29,7 +29,7 @@ try:
     from PyQt6.QtNetwork import QLocalServer, QLocalSocket
     from PyQt6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
                                  QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
-                                 QFrame, QGroupBox, QHBoxLayout, QLabel, QListWidget,
+                                 QFrame, QGroupBox, QHBoxLayout, QLabel, QLayout, QListWidget,
                                  QListWidgetItem, QMainWindow, QMenu, QMessageBox,
                                  QPushButton, QSystemTrayIcon, QToolButton, QVBoxLayout,
                                  QWidget)
@@ -40,7 +40,7 @@ except ImportError:   # e.g. Ubuntu 22.04 / Linux Mint 21 have no PyQt6
     from PyQt5.QtNetwork import QLocalServer, QLocalSocket
     from PyQt5.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
                                  QDialog, QDialogButtonBox, QFileDialog, QFormLayout,
-                                 QFrame, QGroupBox, QHBoxLayout, QLabel, QListWidget,
+                                 QFrame, QGroupBox, QHBoxLayout, QLabel, QLayout, QListWidget,
                                  QListWidgetItem, QMainWindow, QMenu, QMessageBox,
                                  QPushButton, QSystemTrayIcon, QToolButton, QVBoxLayout,
                                  QWidget)
@@ -208,8 +208,11 @@ class SettingsDialog(QDialog):
         super().__init__(win)
         self.win = win
         self.setWindowTitle(_("Settings"))
-        self.setMinimumWidth(480)
         lay = QVBoxLayout(self)
+        # The dialog always takes the size its content needs: wrapped labels
+        # (which Qt does not account for when a window is resized) can never
+        # be cut, whatever the language, font or scaling.
+        lay.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
 
         general = QGroupBox(_("General"))
         form = QFormLayout(general)
@@ -240,6 +243,7 @@ class SettingsDialog(QDialog):
                         "restore them later, for example after reinstalling Linux "
                         "or on another Linux system installed on this computer."))
         info.setWordWrap(True)
+        info.setMinimumWidth(440)
         kl.addWidget(info)
         row = QHBoxLayout()
         btn_export = QPushButton(QIcon.fromTheme("document-export"), _("Export keys…"))
@@ -253,6 +257,7 @@ class SettingsDialog(QDialog):
         note = QLabel(_("The file contains secret keys: keep it private."))
         note.setStyleSheet("color:gray;")
         note.setWordWrap(True)
+        note.setMinimumWidth(440)
         kl.addWidget(note)
         lay.addWidget(keys)
 
