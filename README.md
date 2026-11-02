@@ -18,6 +18,7 @@ without pairing it again.
 - Tray app that tells you when something is out of sync
 - Bluetooth Classic (BR/EDR) and Bluetooth Low Energy (LE) devices
 - Copies keys in both directions: Windows → Linux and Linux → Windows
+- Deletes the pairing of a device from Linux or from Windows
 - When the keys differ, it tells you **which one is newer** and suggests the
   right direction
 - **Key backup**: export the Linux pairing keys to a file and import them after
@@ -147,6 +148,11 @@ Select devices in one list and press the arrow that starts from that list. The
 suggested arrow is highlighted, and bt-sync warns you if you are about to
 overwrite a newer key with an older one.
 
+**Delete…** (under each list) removes the pairing of the selected devices from
+that system only; you can then pair them again or copy the key from the other
+system. On Windows only the pairing keys are removed: Windows may keep listing
+the device in its Bluetooth settings, so remove it there too if needed.
+
 Devices you never want to sync can be moved to the **Archive**. bt-sync then
 ignores them and stops notifying you about them.
 
@@ -176,6 +182,8 @@ a moment.
 sudo bt-sync status                       # show the differences
 sudo bt-sync apply                        # interactive sync in the terminal
 sudo bt-sync scan                         # rescan now (what the timer does)
+sudo bt-sync delete linux AA:BB:CC:DD:EE:FF    # delete a pairing from Linux
+sudo bt-sync delete windows AA:BB:CC:DD:EE:FF  # ... or from Windows
 sudo bt-sync export-keys > keys.json      # back up the Linux pairing keys
 sudo bt-sync import-keys --dry-run < keys.json
 sudo bt-sync import-keys [--overwrite] < keys.json

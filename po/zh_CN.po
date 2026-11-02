@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: bt-sync 1.0.0\n"
+"Project-Id-Version: bt-sync 1.0.2\n"
 "Report-Msgid-Bugs-To: https://github.com/Eraser-025/bt-sync/issues\n"
-"POT-Creation-Date: 2026-11-02 03:24+0100\n"
-"PO-Revision-Date: 2026-11-02 03:13+0100\n"
+"POT-Creation-Date: 2026-11-02 04:03+0100\n"
+"PO-Revision-Date: 2026-11-02 04:03+0100\n"
 "Last-Translator: Eraser-025\n"
 "Language-Team: Chinese (simplified)\n"
 "Language: zh_CN\n"
@@ -191,6 +191,40 @@ msgid "{device}: nothing to copy in that direction (already in sync?)."
 msgstr "{device}：该方向没有需要复制的内容（已经同步了？）。"
 
 #: btsync/backend.py
+#, python-brace-format
+msgid "{device}: not paired on {system}."
+msgstr "{device}：未在 {system} 上配对。"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "removed from {system}: {device}"
+msgstr "已从 {system} 删除：{device}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "invalid Bluetooth address: {mac}"
+msgstr "无效的蓝牙地址：{mac}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "Delete the pairing of {devices} from {system}? [y/N] "
+msgstr "要从 {system} 删除 {devices} 的配对吗？[y/N] "
+
+#: btsync/backend.py
+msgid "Nothing was deleted."
+msgstr "未删除任何内容。"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "backup of the Windows registry saved to {path}"
+msgstr "Windows 注册表备份已保存到 {path}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "error: {message}"
+msgstr "错误：{message}"
+
+#: btsync/backend.py
 msgid "the output contains secret pairing keys: keep it private."
 msgstr "输出包含机密的配对密钥：请妥善保管。"
 
@@ -223,11 +257,6 @@ msgstr "试运行：未做任何更改。"
 #: btsync/backend.py
 msgid "Keys that differ were kept; use --overwrite to replace them."
 msgstr "不同的密钥已保留；使用 --overwrite 可替换它们。"
-
-#: btsync/backend.py
-#, python-brace-format
-msgid "error: {message}"
-msgstr "错误：{message}"
 
 #: btsync/backend.py
 #, python-brace-format
@@ -276,11 +305,6 @@ msgstr "导出到 Windows"
 #: btsync/backend.py
 msgid "(Windows is mounted read-only: cannot export)"
 msgstr "（Windows 以只读方式挂载：无法导出）"
-
-#: btsync/backend.py
-#, python-brace-format
-msgid "backup of the Windows registry saved to {path}"
-msgstr "Windows 注册表备份已保存到 {path}"
 
 #: btsync/backend.py
 #, python-brace-format
@@ -386,6 +410,10 @@ msgid "Support me ☕"
 msgstr "支持我 ☕"
 
 #: btsync/gui.py
+msgid "Delete…"
+msgstr "删除…"
+
+#: btsync/gui.py
 msgid "to Windows"
 msgstr "到 Windows"
 
@@ -403,6 +431,11 @@ msgstr "将所选设备从 {system} 复制到 Windows"
 #, python-brace-format
 msgid "Copy the selected devices from Windows to {system}"
 msgstr "将所选设备从 Windows 复制到 {system}"
+
+#: btsync/gui.py
+#, python-brace-format
+msgid "Delete the pairing of the selected devices from {system}"
+msgstr "从 {system} 删除所选设备的配对"
 
 #: btsync/gui.py
 msgid "Open Bluetooth Sync"
@@ -584,6 +617,35 @@ msgid "Continue?"
 msgstr "继续吗？"
 
 #: btsync/gui.py
+#, python-brace-format
+msgid ""
+"The pairing keys of {devices} will be deleted from {system}. The device will "
+"have to be paired again there, or you can copy the key from the other system."
+msgstr ""
+"{devices} 的配对密钥将从 {system} 删除。之后需要在那里重新配对该设备，或者从"
+"另一个系统复制密钥。"
+
+#: btsync/gui.py
+msgid ""
+"Windows may still list the device in its Bluetooth settings: remove it there "
+"too if needed. A backup of the Windows registry is made first."
+msgstr ""
+"Windows 的蓝牙设置中可能仍会显示该设备：如有需要，也请在那里将其删除。操作前"
+"会先备份 Windows 注册表。"
+
+#: btsync/gui.py
+msgid "Bluetooth will restart for a moment."
+msgstr "蓝牙将短暂重启。"
+
+#: btsync/gui.py
+msgid "Delete the pairing?"
+msgstr "删除配对？"
+
+#: btsync/gui.py
+msgid "Delete"
+msgstr "删除"
+
+#: btsync/gui.py
 msgid "Done:"
 msgstr "已完成："
 
@@ -640,10 +702,6 @@ msgstr[0] "将导入 {n} 个新密钥："
 msgid "{n} key is different from the one on this computer:"
 msgid_plural "{n} keys are different from the ones on this computer:"
 msgstr[0] "{n} 个密钥与本机上的不同："
-
-#: btsync/gui.py
-msgid "Bluetooth will restart for a moment."
-msgstr "蓝牙将短暂重启。"
 
 #: btsync/gui.py
 msgid "Import new keys only"

@@ -157,6 +157,154 @@ class TestKeyBackup(FakeBluez):
             self.assertEqual(res["errors"], ["this is not a valid bt-sync key backup file."])
 
 
+class FakeHivex:
+    """Tiny in-memory stand-in for hivex.Hivex, with the same quirks: a
+    missing child gives None, a missing value raises RuntimeError."""
+    store = {}
+
+    def __init__(self, path, write=False):
+        self.path = path
+        self.n = FakeHivex.store[path]
+
+    def root(self):
+        return 1
+
+    def node_get_child(self, node, name):
+        return next((c for c in self.n[node]["children"]
+                     if self.n[c]["name"].lower() == name.lower()), None)
+
+    def node_children(self, node):
+        return list(self.n[node]["children"])
+
+    def node_name(self, node):
+        return self.n[node]["name"]
+
+    def node_timestamp(self, node):
+        return 116444736000000000 + 10_000_000 * 1000   # 1000 s after the epoch
+
+    def node_values(self, node):
+        return [(node, k) for k in self.n[node]["values"]]
+
+    def node_get_value(self, node, key):
+        if key not in self.n[node]["values"]:
+            raise RuntimeError("Success")
+        return (node, key)
+
+    def value_key(self, v):
+        return v[1]
+
+    def value_value(self, v):
+        return self.n[v[0]]["values"][v[1]]
+
+    def node_set_value(self, node, val):
+        self.n[node]["values"][val["key"]] = (val["t"], val["value"])
+
+    def node_set_values(self, node, vals):
+        self.n[node]["values"] = {v["key"]: (v["t"], v["value"]) for v in vals}
+
+    def node_add_child(self, node, name):
+        new = max(self.n) + 1
+        self.n[new] = {"name": name, "children": [], "values": {}}
+        self.n[node]["children"].append(new)
+        return new
+
+    def node_delete_child(self, node):
+        for n in self.n.values():
+            if node in n["children"]:
+                n["children"].remove(node)
+
+    def commit(self, _path):
+        pass
+
+
+def fake_hive(path):
+    """SYSTEM hive with one adapter: two Classic keys, one LE key without the
+    optional values (KeyLength, IRK, AddressType) and a CentralIRK value."""
+    h = {1: {"name": "ROOT", "children": [], "values": {}}}
+    FakeHivex.store[path] = h
+    x = FakeHivex(path)
+    sel = x.node_add_child(1, "Select")
+    x.node_set_value(sel, {"key": "Current", "t": 4, "value": (1).to_bytes(4, "little")})
+    n = 1
+    for part in ("ControlSet001", "Services", "BTHPORT", "Parameters"):
+        n = x.node_add_child(n, part)
+    keys = x.node_add_child(n, "Keys")
+    devs = x.node_add_child(n, "Devices")
+    ad = x.node_add_child(keys, "aabbccddeeff")
+    for k, v in (("112233445566", "11"), ("223344556677", "22"), ("CentralIRK", "99")):
+        x.node_set_value(ad, {"key": k, "t": 3, "value": bytes.fromhex(v * 16)})
+    le = x.node_add_child(ad, "c1aabbccdd01")
+    x.node_set_value(le, {"key": "LTK", "t": 3, "value": bytes.fromhex("33" * 16)})
+    d = x.node_add_child(devs, "112233445566")
+    x.node_set_value(d, {"key": "Name", "t": 3, "value": b"Headphones\0"})
+    return path
+
+
+class TestWindowsRegistry(unittest.TestCase):
+    def setUp(self):
+        self.saved = sys.modules.get("hivex")
+        sys.modules["hivex"] = type(sys)("hivex")
+        sys.modules["hivex"].Hivex = FakeHivex
+        self.hive = fake_hive("SYSTEM")
+
+    def tearDown(self):
+        if self.saved is None:
+            sys.modules.pop("hivex", None)
+        else:
+            sys.modules["hivex"] = self.saved
+
+    def test_read_with_missing_optional_values(self):
+        devs = m.WinReg(self.hive).read_all()[AD]
+        self.assertEqual(devs[DEV]["name"], "Headphones")
+        le = devs["C1:AA:BB:CC:DD:01"]["le"]
+        self.assertEqual((le["key_length"], le["irk"], le["addr_type"]), (16, None, "static"))
+        self.assertEqual(devs[DEV]["times"]["classic"], 1000.0)
+
+    def test_delete_keeps_other_values(self):
+        w = m.WinReg(self.hive, write=True)
+        self.assertTrue(w.delete_device(AD, DEV))
+        self.assertTrue(w.delete_device(AD, "C1:AA:BB:CC:DD:01"))
+        self.assertFalse(w.delete_device(AD, "99:99:99:99:99:99"))
+        devs = m.WinReg(self.hive).read_all()[AD]
+        self.assertEqual(sorted(devs), ["22:33:44:55:66:77"])
+        h = FakeHivex(self.hive)
+        ad = h.node_get_child(h.node_get_child(h.node_get_child(h.node_get_child(
+            h.node_get_child(h.node_get_child(1, "ControlSet001"), "Services"), "BTHPORT"),
+            "Parameters"), "Keys"), "aabbccddeeff")
+        self.assertEqual(h.value_value((ad, "CentralIRK"))[1], bytes.fromhex("99" * 16))
+
+    def test_write_roundtrip(self):
+        le = {"ltk": "AB" * 16, "key_length": 16, "ediv": 4660, "erand": 2 ** 63 + 5,
+              "irk": "CD" * 16, "addr_type": "static"}
+        w = m.WinReg(self.hive, write=True)
+        w.write_classic(AD, "33:44:55:66:77:88", "EE" * 16)
+        w.write_le(AD, "C1:00:00:00:00:02", le)
+        devs = m.WinReg(self.hive).read_all()[AD]
+        self.assertEqual(devs["33:44:55:66:77:88"]["classic"], "EE" * 16)
+        self.assertEqual(devs["C1:00:00:00:00:02"]["le"], le)
+
+
+class TestDeleteLinux(FakeBluez):
+    def test_delete_removes_device_and_cache(self):
+        m.linux_write(AD, DEV, "Headphones", "classic", KEY)
+        (m.BT_DIR / AD / "cache").mkdir()
+        (m.BT_DIR / AD / "cache" / DEV).write_text("cache")
+        errors = []
+        log, _bak = m.delete_pairings(
+            [{"adapter": AD, "mac": DEV, "side": "linux"},
+             {"adapter": AD, "mac": "00:00:00:00:00:01", "side": "linux"}], errors)
+        self.assertEqual(len(log), 1)
+        self.assertEqual(len(errors), 1)
+        self.assertFalse((m.BT_DIR / AD / DEV).exists())
+        self.assertFalse((m.BT_DIR / AD / "cache" / DEV).exists())
+
+    def test_delete_requests_are_validated(self):
+        for raw in ('{"requests": [{"adapter": "%s", "mac": "../../etc", "side": "linux"}]}' % AD,
+                    '{"requests": [{"adapter": "%s", "mac": "%s", "side": "both"}]}' % (AD, DEV)):
+            with self.assertRaises(m.BtSyncError):
+                m._parse_delete_requests(raw)
+
+
 class TestI18n(unittest.TestCase):
     def tearDown(self):
         i18n.set_language("en")

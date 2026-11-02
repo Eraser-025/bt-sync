@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: bt-sync 1.0.0\n"
+"Project-Id-Version: bt-sync 1.0.2\n"
 "Report-Msgid-Bugs-To: https://github.com/Eraser-025/bt-sync/issues\n"
-"POT-Creation-Date: 2026-11-02 03:24+0100\n"
-"PO-Revision-Date: 2026-11-02 03:13+0100\n"
+"POT-Creation-Date: 2026-11-02 04:03+0100\n"
+"PO-Revision-Date: 2026-11-02 04:03+0100\n"
 "Last-Translator: Eraser-025\n"
 "Language-Team: Brazilian Portuguese\n"
 "Language: pt_BR\n"
@@ -204,6 +204,40 @@ msgid "{device}: nothing to copy in that direction (already in sync?)."
 msgstr "{device}: nada para copiar nessa direção (já sincronizado?)."
 
 #: btsync/backend.py
+#, python-brace-format
+msgid "{device}: not paired on {system}."
+msgstr "{device}: não está pareado no {system}."
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "removed from {system}: {device}"
+msgstr "removido do {system}: {device}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "invalid Bluetooth address: {mac}"
+msgstr "endereço Bluetooth inválido: {mac}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "Delete the pairing of {devices} from {system}? [y/N] "
+msgstr "Excluir o pareamento de {devices} do {system}? [s/N] "
+
+#: btsync/backend.py
+msgid "Nothing was deleted."
+msgstr "Nada foi excluído."
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "backup of the Windows registry saved to {path}"
+msgstr "backup do registro do Windows salvo em {path}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "error: {message}"
+msgstr "erro: {message}"
+
+#: btsync/backend.py
 msgid "the output contains secret pairing keys: keep it private."
 msgstr "a saída contém chaves de pareamento secretas: não a compartilhe."
 
@@ -237,11 +271,6 @@ msgstr "Simulação: nada foi alterado."
 msgid "Keys that differ were kept; use --overwrite to replace them."
 msgstr ""
 "As chaves diferentes foram mantidas; use --overwrite para substituí-las."
-
-#: btsync/backend.py
-#, python-brace-format
-msgid "error: {message}"
-msgstr "erro: {message}"
 
 #: btsync/backend.py
 #, python-brace-format
@@ -290,11 +319,6 @@ msgstr "exportar para o Windows"
 #: btsync/backend.py
 msgid "(Windows is mounted read-only: cannot export)"
 msgstr "(o Windows está montado somente para leitura: não é possível exportar)"
-
-#: btsync/backend.py
-#, python-brace-format
-msgid "backup of the Windows registry saved to {path}"
-msgstr "backup do registro do Windows salvo em {path}"
 
 #: btsync/backend.py
 #, python-brace-format
@@ -403,6 +427,10 @@ msgid "Support me ☕"
 msgstr "Me apoie ☕"
 
 #: btsync/gui.py
+msgid "Delete…"
+msgstr "Excluir…"
+
+#: btsync/gui.py
 msgid "to Windows"
 msgstr "para o Windows"
 
@@ -420,6 +448,11 @@ msgstr "Copiar os dispositivos selecionados do {system} para o Windows"
 #, python-brace-format
 msgid "Copy the selected devices from Windows to {system}"
 msgstr "Copiar os dispositivos selecionados do Windows para o {system}"
+
+#: btsync/gui.py
+#, python-brace-format
+msgid "Delete the pairing of the selected devices from {system}"
+msgstr "Excluir o pareamento dos dispositivos selecionados do {system}"
 
 #: btsync/gui.py
 msgid "Open Bluetooth Sync"
@@ -616,6 +649,37 @@ msgid "Continue?"
 msgstr "Continuar?"
 
 #: btsync/gui.py
+#, python-brace-format
+msgid ""
+"The pairing keys of {devices} will be deleted from {system}. The device will "
+"have to be paired again there, or you can copy the key from the other system."
+msgstr ""
+"As chaves de pareamento de {devices} serão excluídas do {system}. Será "
+"preciso parear o dispositivo de novo lá, ou você pode copiar a chave do "
+"outro sistema."
+
+#: btsync/gui.py
+msgid ""
+"Windows may still list the device in its Bluetooth settings: remove it there "
+"too if needed. A backup of the Windows registry is made first."
+msgstr ""
+"O Windows pode continuar mostrando o dispositivo nas configurações de "
+"Bluetooth: se precisar, remova-o lá também. Antes é feito um backup do "
+"registro do Windows."
+
+#: btsync/gui.py
+msgid "Bluetooth will restart for a moment."
+msgstr "O Bluetooth será reiniciado por um instante."
+
+#: btsync/gui.py
+msgid "Delete the pairing?"
+msgstr "Excluir o pareamento?"
+
+#: btsync/gui.py
+msgid "Delete"
+msgstr "Excluir"
+
+#: btsync/gui.py
 msgid "Done:"
 msgstr "Concluído:"
 
@@ -677,10 +741,6 @@ msgid "{n} key is different from the one on this computer:"
 msgid_plural "{n} keys are different from the ones on this computer:"
 msgstr[0] "{n} chave é diferente da deste computador:"
 msgstr[1] "{n} chaves são diferentes das deste computador:"
-
-#: btsync/gui.py
-msgid "Bluetooth will restart for a moment."
-msgstr "O Bluetooth será reiniciado por um instante."
 
 #: btsync/gui.py
 msgid "Import new keys only"

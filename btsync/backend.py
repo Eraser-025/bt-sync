@@ -18,6 +18,7 @@ commands:
   apply         interactive sync from the terminal.
   export-keys   print a backup of the Linux pairing keys (JSON) on stdout.
   import-keys   restore a backup read from stdin into Linux.
+  delete        delete the pairing of a device from Linux or Windows.
   apply-json    used by bt-sync-gui through pkexec (requests on stdin).
 """
 import argparse
@@ -320,7 +321,10 @@ class WinReg:
         return c if c else None   # hivex returns None/0 when the child is missing
 
     def _val(self, node, name):
-        v = self.h.node_get_value(node, name)
+        try:
+            v = self.h.node_get_value(node, name)
+        except RuntimeError:    # hivex raises (errno 0) when the value is missing
+            return None
         return self.h.value_value(v) if v else None
 
     def _time(self, node):
@@ -425,6 +429,28 @@ class WinReg:
         if le.get("irk"):
             irk = rev_hex(le["irk"]) if CFG["reverse_irk"] else le["irk"]
             sv(node, {"key": "IRK", "t": REG_BINARY, "value": bytes.fromhex(irk)})
+
+    def delete_device(self, adapter, mac):
+        """Delete the Classic key (a value of the adapter key) and the LE key
+        (a subkey) of a device. Returns True if something was deleted."""
+        ad = self._adapter(adapter)
+        raw = raw_mac(mac)
+        found = False
+        child = self._child(ad, raw)
+        if child is not None:
+            self.h.node_delete_child(child)
+            found = True
+        keep = []
+        for v in self.h.node_values(ad):
+            key = self.h.value_key(v)
+            if key.lower() == raw:
+                found = True
+                continue
+            t, data = self.h.value_value(v)
+            keep.append({"key": key, "t": t, "value": data})
+        if found:
+            self.h.node_set_values(ad, keep)
+        return found
 
     def commit(self):
         try:
@@ -635,6 +661,17 @@ def kind_label(kind):
     return "Classic" if kind == "classic" else "LE"
 
 
+def backup_hive(wm):
+    """Copy the Windows SYSTEM hive to /var/lib/bt-sync/backups (root only)."""
+    ensure_dirs()
+    bak = BACKUPS / f"SYSTEM.{time.strftime('%Y%m%d-%H%M%S')}"
+    shutil.copyfile(wm.hive, bak)
+    os.chmod(bak, 0o600)
+    for old in sorted(BACKUPS.glob("SYSTEM.*"))[:-CFG["keep_backups"]]:
+        old.unlink()
+    return bak
+
+
 def do_sync(wm, to_linux, to_win, errors):
     """Copy the keys. Returns (things done, backup path or None)."""
     log, bak = [], None
@@ -643,12 +680,7 @@ def do_sync(wm, to_linux, to_win, errors):
     log += [_("imported into {system}: {device} ({kind})").format(
         system=LINUX, device=it["name"], kind=kind_label(it["kind"])) for it in to_linux]
     if to_win:
-        ensure_dirs()
-        bak = BACKUPS / f"SYSTEM.{time.strftime('%Y%m%d-%H%M%S')}"
-        shutil.copyfile(wm.hive, bak)
-        os.chmod(bak, 0o600)
-        for old in sorted(BACKUPS.glob("SYSTEM.*"))[:-CFG["keep_backups"]]:
-            old.unlink()
+        bak = backup_hive(wm)
         wreg = WinReg(wm.hive, write=True)
         for it in to_win:
             if it["kind"] == "classic":
@@ -762,6 +794,134 @@ def cmd_apply_json(_args):
                                               {"error": repr(e)})]))
     print(json.dumps(result))
     return 0
+
+
+# ---------------------------------------------------------- delete pairing
+def _parse_delete_requests(raw):
+    try:
+        reqs = json.loads(raw)["requests"]
+    except (ValueError, KeyError, TypeError):
+        raise BtSyncError(N_("invalid request from the GUI.")) from None
+    if not isinstance(reqs, list) or not all(
+            isinstance(r, dict) and MAC_RE.match(str(r.get("adapter")))
+            and MAC_RE.match(str(r.get("mac"))) and r.get("side") in ("linux", "windows")
+            for r in reqs):
+        raise BtSyncError(N_("invalid request from the GUI."))
+    return reqs
+
+
+def delete_pairings(reqs, errors):
+    """Delete [{adapter, mac, side}] pairings. Returns (log, backup path)."""
+    log, bak = [], None
+    lin_reqs = [r for r in reqs if r["side"] == "linux"]
+    win_reqs = [r for r in reqs if r["side"] == "windows"]
+
+    if lin_reqs:
+        lin = linux_read()
+        todo = []
+        for r in lin_reqs:
+            if (BT_DIR / r["adapter"] / r["mac"]).is_dir():
+                todo.append((r, lin.get(r["adapter"], {}).get(r["mac"], {}).get("name")
+                             or r["mac"]))
+            else:
+                errors.append(_("{device}: not paired on {system}.").format(
+                    device=r["mac"], system=LINUX))
+        if todo:
+            res = run(["systemctl", "stop", "bluetooth.service"])
+            if res.returncode != 0:
+                raise BtSyncError(N_("could not stop bluetooth.service: {error}"),
+                                  error=res.stderr.strip())
+            try:
+                for r, name in todo:
+                    shutil.rmtree(BT_DIR / r["adapter"] / r["mac"])
+                    (BT_DIR / r["adapter"] / "cache" / r["mac"]).unlink(missing_ok=True)
+                    log.append(_("removed from {system}: {device}").format(
+                        system=LINUX, device=name))
+            finally:
+                res = run(["systemctl", "start", "bluetooth.service"])
+                if res.returncode != 0:
+                    errors.append(_("could not restart bluetooth.service, run 'sudo "
+                                    "systemctl start bluetooth': {error}").format(
+                        error=res.stderr.strip()))
+
+    if win_reqs:
+        with WinMount(rw=True) as wm:
+            if not wm.writable:
+                errors.append(readonly_msg(wm))
+                return log, bak
+            win = WinReg(wm.hive).read_all()
+            todo = []
+            for r in win_reqs:
+                d = win.get(r["adapter"], {}).get(r["mac"])
+                if d:
+                    todo.append((r, d["name"]))
+                else:
+                    errors.append(_("{device}: not paired on {system}.").format(
+                        device=r["mac"], system="Windows"))
+            if todo:
+                bak = backup_hive(wm)
+                wreg = WinReg(wm.hive, write=True)
+                for r, name in todo:
+                    wreg.delete_device(r["adapter"], r["mac"])
+                wreg.commit()
+                del wreg
+                log += [_("removed from {system}: {device}").format(
+                    system="Windows", device=name) for r, name in todo]
+    return log, (str(bak) if bak else None)
+
+
+def cmd_delete_json(_args):
+    """Called by the GUI through pkexec. Always prints one JSON line."""
+    result = {"ok": [], "errors": [], "backup": None}
+    try:
+        require_root()
+        reqs = _parse_delete_requests(sys.stdin.read())
+        with exclusive_lock():
+            try:
+                result["ok"], result["backup"] = delete_pairings(reqs, result["errors"])
+            finally:
+                refresh_state()
+    except BtSyncError as e:
+        result["errors"].append(str(e))
+    except Exception as e:
+        result["errors"].append(i18n.render([(N_("unexpected error: {error}"),
+                                              {"error": repr(e)})]))
+    print(json.dumps(result))
+    return 0
+
+
+def cmd_delete(args):
+    require_root()
+    macs = [m.upper() for m in args.mac]
+    bad = [m for m in macs if not MAC_RE.match(m)]
+    if bad:
+        raise BtSyncError(N_("invalid Bluetooth address: {mac}"), mac=", ".join(bad))
+    system = LINUX if args.side == "linux" else "Windows"
+    if not args.yes:
+        try:
+            a = input(_("Delete the pairing of {devices} from {system}? [y/N] ").format(
+                devices=", ".join(macs), system=system))
+        except EOFError:
+            a = ""
+        if a.strip().lower() not in ("y", "yes", "s", "si", "sì", "sí", "sim", "j", "ja", "o", "oui", "д", "да"):
+            print(_("Nothing was deleted."))
+            return 0
+    adapters = set(linux_adapters())
+    if args.adapter:
+        adapters = {args.adapter.upper()}
+    reqs = [{"adapter": ad, "mac": mac, "side": args.side} for mac in macs for ad in adapters]
+    errors = []
+    with exclusive_lock():
+        log, bak = delete_pairings(reqs, errors)
+        refresh_state()
+    if bak:
+        print("  " + _("backup of the Windows registry saved to {path}").format(path=bak))
+    for line in log:
+        print("  " + line)
+    if not log:
+        for line in errors:
+            print("  " + _("error: {message}").format(message=line), file=sys.stderr)
+    return 0 if log else 1
 
 
 # ------------------------------------------------- key backup (export/import)
@@ -997,9 +1157,17 @@ def main(argv=None):
             ("apply", cmd_apply, "interactive sync"),
             ("export-keys", cmd_export_keys, "print a backup of the Linux pairing keys"),
             ("import-keys", cmd_import_keys, "restore a key backup read from stdin"),
-            ("apply-json", cmd_apply_json, "backend for the GUI (reads JSON on stdin)")):
+            ("delete", cmd_delete, "delete the pairing of a device from Linux or Windows"),
+            ("apply-json", cmd_apply_json, "backend for the GUI (reads JSON on stdin)"),
+            ("delete-json", cmd_delete_json, "backend for the GUI (reads JSON on stdin)")):
         sp = sub.add_parser(name, help=hlp)
         sp.set_defaults(fn=fn)
+        if name == "delete":
+            sp.add_argument("side", choices=("linux", "windows"),
+                            help="where to delete the pairing")
+            sp.add_argument("mac", nargs="+", help="Bluetooth address of the device")
+            sp.add_argument("--adapter", help="only this adapter (default: all)")
+            sp.add_argument("-y", "--yes", action="store_true", help="do not ask")
         if name == "import-keys":
             sp.add_argument("--dry-run", action="store_true",
                             help="only show what would be imported")

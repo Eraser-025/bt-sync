@@ -4,7 +4,7 @@
 # RPM package for Fedora and Fedora Atomic desktops (Bazzite, Silverblue,
 # Kinoite...). Built on COPR; on Bazzite install it with rpm-ostree.
 Name:           bt-sync
-Version:        1.0.1
+Version:        1.0.2
 Release:        1%{?dist}
 Summary:        Sync Bluetooth pairing keys between Linux and Windows (dual boot)
 License:        GPL-3.0-or-later
@@ -76,6 +76,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_datadir}/polkit-1/actions/io.github.eraser025.btsync.policy
 
 %changelog
+* Mon Nov 02 2026 Eraser-025 <349610023+Eraser-025@users.noreply.github.com> - 1.0.2-1
+- Delete the pairing of a device from Linux or Windows
+- Fix reading LE keys without optional registry values (IRK, KeyLength)
+
 * Mon Nov 02 2026 Eraser-025 <349610023+Eraser-025@users.noreply.github.com> - 1.0.1-1
 - Settings dialog: text is never cut, in any language or font size
 

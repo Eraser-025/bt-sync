@@ -384,6 +384,7 @@ class MainWindow(QMainWindow):
         self.left.itemSelectionChanged.connect(lambda: self._selection_changed(self.left))
         self.right.itemSelectionChanged.connect(lambda: self._selection_changed(self.right))
         self.box_left = self._box(self.linux, self.left)
+        self.btn_del_left = self._delete_button(self.box_left, "linux")
         mid.addWidget(self.box_left, 1)
         arrows = QVBoxLayout()
         arrows.addStretch(1)
@@ -406,7 +407,9 @@ class MainWindow(QMainWindow):
             arrows.addWidget(w, 0, Qt.AlignmentFlag.AlignHCenter)
         arrows.addStretch(1)
         mid.addLayout(arrows)
-        mid.addWidget(self._box("Windows", self.right), 1)
+        box_right = self._box("Windows", self.right)
+        self.btn_del_right = self._delete_button(box_right, "windows")
+        mid.addWidget(box_right, 1)
         root.addLayout(mid, 3)
 
         self.sel_hint = QLabel()
@@ -454,6 +457,15 @@ class MainWindow(QMainWindow):
         self._update_captions()
         self._selection_changed(None)
 
+    def _delete_button(self, box, side):
+        b = QPushButton(QIcon.fromTheme("edit-delete"), _("Delete…"))
+        b.clicked.connect(lambda: self.delete_selected(side))
+        row = QHBoxLayout()
+        row.addStretch(1)
+        row.addWidget(b)
+        box.layout().addLayout(row)
+        return b
+
     def _update_captions(self):
         self.box_left.setTitle(self.linux)
         self.cap_l2w.setText(_("to Windows"))
@@ -462,6 +474,10 @@ class MainWindow(QMainWindow):
                                 .format(system=self.linux))
         self.btn_w2l.setToolTip(_("Copy the selected devices from Windows to {system}")
                                 .format(system=self.linux))
+        self.btn_del_left.setToolTip(_("Delete the pairing of the selected devices from "
+                                       "{system}").format(system=self.linux))
+        self.btn_del_right.setToolTip(_("Delete the pairing of the selected devices from "
+                                        "{system}").format(system="Windows"))
 
     def _build_tray_menu(self):
         if not self.tray:
@@ -697,6 +713,8 @@ class MainWindow(QMainWindow):
                 other.clearSelection()
                 other.blockSignals(False)
         busy = self._proc is not None
+        self.btn_del_left.setEnabled(bool(self.left.selectedItems()) and not busy)
+        self.btn_del_right.setEnabled(bool(self.right.selectedItems()) and not busy)
         hint, good = None, False
         for b, src, here in ((self.btn_l2w, self.left, "linux"),
                              (self.btn_w2l, self.right, "windows")):
@@ -843,6 +861,33 @@ class MainWindow(QMainWindow):
                 return
         reqs = [{"adapter": s[0], "mac": s[1], "direction": direction} for s in sel]
         self.run_helper(["apply-json"], json.dumps({"requests": reqs}).encode(),
+                        self._sync_done)
+
+    # ---- delete
+    def delete_selected(self, side):
+        lst = self.left if side == "linux" else self.right
+        sel = [i.data(ROLE) for i in lst.selectedItems()]
+        if not sel:
+            return
+        system = self.linux if side == "linux" else "Windows"
+        text = _("The pairing keys of {devices} will be deleted from {system}. The device "
+                 "will have to be paired again there, or you can copy the key from the "
+                 "other system.").format(devices=", ".join(s[3] for s in sel), system=system)
+        if side == "windows":
+            text += "\n\n" + _("Windows may still list the device in its Bluetooth "
+                                 "settings: remove it there too if needed. A backup of "
+                                 "the Windows registry is made first.")
+        else:
+            text += "\n\n" + _("Bluetooth will restart for a moment.")
+        box = QMessageBox(QMessageBox.Icon.Warning, _("Delete the pairing?"), text,
+                          parent=self)
+        b_del = box.addButton(_("Delete"), QMessageBox.ButtonRole.DestructiveRole)
+        box.setDefaultButton(box.addButton(QMessageBox.StandardButton.Cancel))
+        box.exec()
+        if box.clickedButton() is not b_del:
+            return
+        reqs = [{"adapter": s[0], "mac": s[1], "side": side} for s in sel]
+        self.run_helper(["delete-json"], json.dumps({"requests": reqs}).encode(),
                         self._sync_done)
 
     def _sync_done(self, out, err, code):

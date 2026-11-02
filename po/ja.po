@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: bt-sync 1.0.0\n"
+"Project-Id-Version: bt-sync 1.0.2\n"
 "Report-Msgid-Bugs-To: https://github.com/Eraser-025/bt-sync/issues\n"
-"POT-Creation-Date: 2026-11-02 03:24+0100\n"
-"PO-Revision-Date: 2026-11-02 03:13+0100\n"
+"POT-Creation-Date: 2026-11-02 04:03+0100\n"
+"PO-Revision-Date: 2026-11-02 04:03+0100\n"
 "Last-Translator: Eraser-025\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -201,6 +201,40 @@ msgid "{device}: nothing to copy in that direction (already in sync?)."
 msgstr "{device}: その方向にコピーするものはありません (既に同期済み？)。"
 
 #: btsync/backend.py
+#, python-brace-format
+msgid "{device}: not paired on {system}."
+msgstr "{device}: {system} ではペアリングされていません。"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "removed from {system}: {device}"
+msgstr "{system} から削除しました: {device}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "invalid Bluetooth address: {mac}"
+msgstr "無効な Bluetooth アドレス: {mac}"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "Delete the pairing of {devices} from {system}? [y/N] "
+msgstr "{system} から {devices} のペアリングを削除しますか？ [y/N] "
+
+#: btsync/backend.py
+msgid "Nothing was deleted."
+msgstr "何も削除していません。"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "backup of the Windows registry saved to {path}"
+msgstr "Windows レジストリのバックアップを {path} に保存しました"
+
+#: btsync/backend.py
+#, python-brace-format
+msgid "error: {message}"
+msgstr "エラー: {message}"
+
+#: btsync/backend.py
 msgid "the output contains secret pairing keys: keep it private."
 msgstr ""
 "出力には秘密のペアリングキーが含まれています。他人に見せないでください。"
@@ -235,11 +269,6 @@ msgstr "ドライラン: 何も変更していません。"
 msgid "Keys that differ were kept; use --overwrite to replace them."
 msgstr ""
 "異なるキーはそのままにしました。置き換えるには --overwrite を使ってください。"
-
-#: btsync/backend.py
-#, python-brace-format
-msgid "error: {message}"
-msgstr "エラー: {message}"
 
 #: btsync/backend.py
 #, python-brace-format
@@ -289,11 +318,6 @@ msgstr "Windows にエクスポート"
 msgid "(Windows is mounted read-only: cannot export)"
 msgstr ""
 "(Windows は読み取り専用でマウントされているため、エクスポートできません)"
-
-#: btsync/backend.py
-#, python-brace-format
-msgid "backup of the Windows registry saved to {path}"
-msgstr "Windows レジストリのバックアップを {path} に保存しました"
 
 #: btsync/backend.py
 #, python-brace-format
@@ -401,6 +425,10 @@ msgid "Support me ☕"
 msgstr "応援する ☕"
 
 #: btsync/gui.py
+msgid "Delete…"
+msgstr "削除…"
+
+#: btsync/gui.py
 msgid "to Windows"
 msgstr "Windows へ"
 
@@ -418,6 +446,11 @@ msgstr "選択したデバイスを {system} から Windows にコピー"
 #, python-brace-format
 msgid "Copy the selected devices from Windows to {system}"
 msgstr "選択したデバイスを Windows から {system} にコピー"
+
+#: btsync/gui.py
+#, python-brace-format
+msgid "Delete the pairing of the selected devices from {system}"
+msgstr "選択したデバイスのペアリングを {system} から削除"
 
 #: btsync/gui.py
 msgid "Open Bluetooth Sync"
@@ -612,6 +645,36 @@ msgid "Continue?"
 msgstr "続行しますか？"
 
 #: btsync/gui.py
+#, python-brace-format
+msgid ""
+"The pairing keys of {devices} will be deleted from {system}. The device will "
+"have to be paired again there, or you can copy the key from the other system."
+msgstr ""
+"{devices} のペアリングキーを {system} から削除します。そちらでは再度ペアリン"
+"グするか、もう一方のシステムからキーをコピーする必要があります。"
+
+#: btsync/gui.py
+msgid ""
+"Windows may still list the device in its Bluetooth settings: remove it there "
+"too if needed. A backup of the Windows registry is made first."
+msgstr ""
+"Windows の Bluetooth 設定にはデバイスが表示されたままになることがあります。必"
+"要に応じてそちらからも削除してください。先に Windows レジストリのバックアップ"
+"を作成します。"
+
+#: btsync/gui.py
+msgid "Bluetooth will restart for a moment."
+msgstr "Bluetooth が少しの間再起動します。"
+
+#: btsync/gui.py
+msgid "Delete the pairing?"
+msgstr "ペアリングを削除しますか？"
+
+#: btsync/gui.py
+msgid "Delete"
+msgstr "削除"
+
+#: btsync/gui.py
 msgid "Done:"
 msgstr "完了:"
 
@@ -671,10 +734,6 @@ msgstr[0] "{n} 個の新しいキーをインポートします:"
 msgid "{n} key is different from the one on this computer:"
 msgid_plural "{n} keys are different from the ones on this computer:"
 msgstr[0] "{n} 個のキーがこのコンピューターのものと異なります:"
-
-#: btsync/gui.py
-msgid "Bluetooth will restart for a moment."
-msgstr "Bluetooth が少しの間再起動します。"
 
 #: btsync/gui.py
 msgid "Import new keys only"
