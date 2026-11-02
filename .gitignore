@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*.tmp
+# local packaging builds (the AUR package lives in its own repository)
+/pkg/
+/src/
+*.pkg.tar.*
+*.tar.gz

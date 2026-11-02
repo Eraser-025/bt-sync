@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Eraser-025
+[Unit]
+Description=bt-sync: compare Bluetooth pairing keys between Linux and Windows
+Documentation=https://github.com/Eraser-025/bt-sync
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bt-sync scan
+Nice=19
+IOSchedulingClass=idle
+CPUSchedulingPolicy=idle

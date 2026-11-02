@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Eraser-025
+[Unit]
+Description=bt-sync: periodic Bluetooth key scan
+Documentation=https://github.com/Eraser-025/bt-sync
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=30min
+AccuracySec=5min
+
+[Install]
+WantedBy=timers.target

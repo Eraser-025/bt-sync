@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Eraser-025
+[Desktop Entry]
+Type=Application
+Name=Bluetooth Sync
+GenericName=Bluetooth Pairing Sync
+Comment=Sync Bluetooth pairing keys between Linux and Windows (dual boot)
+Exec=bt-sync-gui
+Icon=bt-sync
+Categories=Settings;HardwareSettings;
+Keywords=bluetooth;dualboot;windows;pairing;keys;
+Terminal=false
+StartupNotify=false

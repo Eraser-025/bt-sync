@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Eraser-025
+# State directory of bt-sync. The trigger file is world-writable on purpose:
+# the GUI (running as a normal user) touches it to request a rescan.
+d /var/lib/bt-sync                 0755 root root -
+d /var/lib/bt-sync/backups         0700 root root -
+f /var/lib/bt-sync/refresh.trigger 0666 root root -

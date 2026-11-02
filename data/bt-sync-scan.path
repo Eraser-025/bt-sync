@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Eraser-025
+[Unit]
+Description=bt-sync: scan requested by the GUI
+Documentation=https://github.com/Eraser-025/bt-sync
+
+[Path]
+PathChanged=/var/lib/bt-sync/refresh.trigger
+Unit=bt-sync-scan.service
+
+[Install]
+WantedBy=paths.target
