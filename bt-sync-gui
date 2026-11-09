@@ -13,6 +13,19 @@ for _lib in (_here.parent / "lib" / "bt-sync", _here):   # installed, source tre
         sys.path.insert(0, str(_lib))
         break
 
-from btsync.gui import main  # noqa: E402
+try:
+    from btsync.gui import main  # noqa: E402
+except ImportError as e:   # launched from the menu there is no terminal: say it
+    msg = ("bt-sync cannot start: the Qt bindings for Python are missing or broken "
+           f"({e}). Reinstall python-pyqt6 (Arch) or python3-pyqt6 "
+           "(Debian, Ubuntu, Fedora).")
+    print(msg, file=sys.stderr)
+    import subprocess
+    try:
+        subprocess.run(["notify-send", "-u", "critical", "-i", "dialog-error",
+                        "Bluetooth Sync", msg], timeout=5)
+    except (OSError, subprocess.SubprocessError):
+        pass
+    sys.exit(1)
 
 sys.exit(main())

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+- When the Qt bindings for Python are missing or broken, `bt-sync-gui` now
+  prints what is wrong and shows a notification, instead of silently doing
+  nothing when launched from the menu.
+
 ## 1.0.2
 
 - New **Delete…** button under each list (and `bt-sync delete`): removes the

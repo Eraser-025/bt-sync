@@ -2,7 +2,7 @@
 # Copyright (C) 2026 Eraser-025
 """bt-sync: keep Bluetooth pairing keys in sync between Linux and Windows."""
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 PROJECT_URL = "https://github.com/Eraser-025/bt-sync"
 KOFI_URL = "https://ko-fi.com/eraser117"
